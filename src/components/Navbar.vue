@@ -14,6 +14,11 @@
       </v-btn>
     </v-toolbar>
     <v-navigation-drawer app temporary v-model="drawer" class="primary">
+      <v-layout column align-center>
+        <v-flex class="mt-5">
+          <Popup/>
+        </v-flex>
+      </v-layout>
       <v-list>
         <v-list-tile v-for="link in links" :key="link.text" router :to="link.route">
           <v-list-tile-action>
@@ -29,6 +34,8 @@
 </template>
 
 <script>
+import Popup from "@/components/Popup";
+
 export default {
   data() {
     return {
@@ -51,6 +58,9 @@ export default {
         }
       ]
     };
+  },
+  components: {
+    Popup
   }
 };
 </script>
