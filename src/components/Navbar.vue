@@ -6,12 +6,12 @@
         <span class="font-weight-light">Celebration of</span>
         <span class="text-uppercase">_Hope</span>
       </v-toolbar-title>
-      <v-spacer></v-spacer>
+      <!-- <v-spacer></v-spacer>
       <v-btn flat>
         <span>Welcome, admin
           <v-icon right>exit_to_app</v-icon>
         </span>
-      </v-btn>
+      </v-btn>-->
     </v-toolbar>
     <v-navigation-drawer app temporary v-model="drawer" class="primary">
       <v-layout column align-center>
