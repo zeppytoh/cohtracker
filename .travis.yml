@@ -1,0 +1,11 @@
+//.travis.yml
+language: node_js
+node_js:
+- "10.14.2"
+provider: pages
+  skip-cleanup: true
+  github-token: 6627e82bcac3e760299ddcc66fb44685d1589698  # Set in the settings page of your repository, as a secure variable
+  keep-history: true
+  on:
+    branch: master
+local-dir: /dist
