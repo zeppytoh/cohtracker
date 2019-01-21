@@ -42,16 +42,6 @@ export default {
       drawer: false,
       links: [
         {
-          icon: "dashboard",
-          text: "Dashboard",
-          route: "/"
-        },
-        {
-          icon: "folder",
-          text: "Asteroids",
-          route: "/about"
-        },
-        {
           icon: "person",
           text: "Believers",
           route: "/believers"

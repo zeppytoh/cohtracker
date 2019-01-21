@@ -1,26 +1,36 @@
 <template>
   <v-dialog max-width="600px">
     <v-btn flat slot="activator" class="success">Login</v-btn>
-    <v-card class="pa-3">
-      <v-card-title>
-        <h2>Login to Celebration of Hope Tracker</h2>
-      </v-card-title>
+    <v-card class="elevation-12">
+      <v-toolbar dark color="primary">
+        <v-toolbar-title>Celebration of Hope</v-toolbar-title>
+      </v-toolbar>
       <v-card-text>
-        <v-form class="px-3">
-          <v-text-field label="Name" v-model="name"></v-text-field>
+        <v-form ref="form" v-model="valid" lazy-validation>
           <v-text-field
+            prepend-icon="person"
+            name="email"
+            label="Email"
+            type="email"
+            v-model="email"
+            :rules="emailRules"
+            required
+          ></v-text-field>
+          <v-text-field
+            prepend-icon="lock"
+            name="password"
             label="Password"
+            id="password"
+            type="password"
+            required
             v-model="password"
-            :append-icon="show ? 'visibility_off' : 'visibility'"
-            :rules="[rules.required, rules.min]"
-            @click:append="show = !show"
+            :rules="passwordRules"
           ></v-text-field>
         </v-form>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn flat>Sign-up</v-btn>
-        <v-btn class="primary">Login</v-btn>
+        <v-btn color="primary" :disabled="!valid" @click="submit">Join</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
