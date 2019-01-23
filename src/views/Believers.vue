@@ -22,8 +22,7 @@
         >
           <v-flex xs12 md6>
             <div class="caption grey--text">Name</div>
-            <v-icon small left>account_circle</v-icon>
-            <span>{{ person.FullName }}</span>
+            <span class="title">{{ person.FullName }}</span>
           </v-flex>
           <v-flex xs6 sm4 md2>
             <div class="caption grey--text">Mobile</div>
@@ -44,6 +43,7 @@
         </v-layout>
         <v-divider></v-divider>
       </v-card>
+      <Churches/>
     </v-container>
     <!-- <v-container grid-list-sm>
       <v-layout row wrap>
@@ -75,7 +75,12 @@
 
 <script>
 import axios from "axios";
+import Churches from "@/components/Churches.vue";
+
 export default {
+  components: {
+    Churches
+  },
   data() {
     return {
       believers: [],
@@ -87,8 +92,10 @@ export default {
   },
   methods: {
     fetchData() {
+      var APIKey = "f912f198-e443-11e8-a9c5-89e884cb2e41";
       var url =
-        "https://etwl67dlx2.execute-api.ap-southeast-1.amazonaws.com/staging/v1/believers";
+        "https://etwl67dlx2.execute-api.ap-southeast-1.amazonaws.com/staging/v1/believers?AccessToken=d78985fdc79388a1854ffb133dd4f619?APIKey=" +
+        APIKey;
       axios
         .get(url)
         .then(res => {

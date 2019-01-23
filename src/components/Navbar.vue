@@ -3,8 +3,10 @@
     <v-toolbar flat app>
       <v-toolbar-side-icon @click.prevent.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title>
-        <span class="font-weight-light">Celebration of</span>
-        <span class="text-uppercase">_Hope</span>
+        <router-link class="home-title" router :to="{name : 'login'}">
+          <span class="font-weight-light">Celebration of</span>
+          <span class="text-uppercase">_Hope</span>
+        </router-link>
       </v-toolbar-title>
       <!-- <v-spacer></v-spacer>
       <v-btn flat>
@@ -13,14 +15,15 @@
         </span>
       </v-btn>-->
     </v-toolbar>
-    <v-navigation-drawer app temporary v-model="drawer" class="primary">
+    <v-navigation-drawer app temporary v-model="drawer" class="secondary">
       <v-layout column align-center>
         <v-flex class="mt-5">
-          <Popup/>
+          <!-- <Popup/> -->
         </v-flex>
       </v-layout>
+      <v-divider></v-divider>
       <v-list>
-        <v-list-tile v-for="link in links" :key="link.text" router :to="link.route">
+        <v-list-tile v-for="link in links" :key="link.text" router :to="{name: link.routename}">
           <v-list-tile-action>
             <v-icon class="white--text">{{ link.icon }}</v-icon>
           </v-list-tile-action>
@@ -44,7 +47,7 @@ export default {
         {
           icon: "person",
           text: "Believers",
-          route: "/believers"
+          routename: "believers"
         }
       ]
     };
@@ -54,3 +57,9 @@ export default {
   }
 };
 </script>
+
+<style lang="scss">
+.home-title {
+  text-decoration: none;
+}
+</style>

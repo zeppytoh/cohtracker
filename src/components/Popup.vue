@@ -1,7 +1,7 @@
 <template>
   <v-dialog max-width="600px">
-    <v-btn flat slot="activator" class="success">Login</v-btn>
-    <v-card class="elevation-12">
+    <v-btn flat slot="activator" class="primary">Login</v-btn>
+    <v-card>
       <v-toolbar dark color="primary">
         <v-toolbar-title>Celebration of Hope</v-toolbar-title>
       </v-toolbar>

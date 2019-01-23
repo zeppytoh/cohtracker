@@ -21,3 +21,9 @@ export default {
   }
 };
 </script>
+
+<style lang="scss">
+@import "@/variables.scss";
+@import "~vuetify-scss";
+</style>
+
