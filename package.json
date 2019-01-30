@@ -10,11 +10,10 @@
   "dependencies": {
     "axios": "^0.18.0",
     "css-loader": "^2.1.0",
-    "firebase": "^5.8.0",
+    "ez-fetch": "^1.2.0",
     "vue": "^2.5.21",
     "vue-router": "^3.0.1",
-    "vuetify": "^1.4.2",
-    "vuetify-scss": "^1.2.11",
+    "vuetify": "^1.4.3",
     "vuex": "^3.1.0"
   },
   "devDependencies": {

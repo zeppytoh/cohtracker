@@ -1,21 +1,6 @@
 <template>
   <nav>
-    <v-toolbar flat app>
-      <v-toolbar-side-icon @click.prevent.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title>
-        <router-link class="home-title" router :to="{name : 'login'}">
-          <span class="font-weight-light">Celebration of</span>
-          <span class="text-uppercase">_Hope</span>
-        </router-link>
-      </v-toolbar-title>
-      <!-- <v-spacer></v-spacer>
-      <v-btn flat>
-        <span>Welcome, admin
-          <v-icon right>exit_to_app</v-icon>
-        </span>
-      </v-btn>-->
-    </v-toolbar>
-    <v-navigation-drawer app temporary v-model="drawer" class="secondary">
+    <v-navigation-drawer app dark clipped right v-model="drawer" class="secondary darken-1">
       <v-layout column align-center>
         <v-flex class="mt-5">
           <!-- <Popup/> -->
@@ -33,11 +18,28 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
+    <v-toolbar fixed dark clipped-right app class="coh-toolbar">
+      <v-btn color="primary" small flat router :to="{name : 'login'}">
+        <v-img :src="require('../assets/COH_Eng_White-300.png')" contain height="64"></v-img>
+      </v-btn>
+
+      <v-spacer></v-spacer>
+      <v-toolbar-items>
+        <v-toolbar-side-icon @click.prevent.stop="drawer = !drawer"></v-toolbar-side-icon>
+      </v-toolbar-items>
+
+      <!-- <v-spacer></v-spacer>
+      <v-btn flat>
+        <span>Welcome, admin
+          <v-icon right>exit_to_app</v-icon>
+        </span>
+      </v-btn>-->
+    </v-toolbar>
   </nav>
 </template>
 
 <script>
-import Popup from "@/components/Popup";
+// import Popup from "@/components/Popup";
 
 export default {
   data() {
@@ -53,7 +55,7 @@ export default {
     };
   },
   components: {
-    Popup
+    // Popup
   }
 };
 </script>
@@ -61,5 +63,8 @@ export default {
 <style lang="scss">
 .home-title {
   text-decoration: none;
+}
+.coh-toolbar {
+  background-image: linear-gradient(to bottom, #f24405, var(--v-primary-base));
 }
 </style>

@@ -26,8 +26,30 @@ export default new Router({
     {
       path: '/believers',
       name: 'believers',
+      props: true,
+      beforeEnter: (to, from, next) => {
+        if (to.params.user) {
+          next()
+        } else {
+          next({ name: 'login' })
+        }
+      },
       component: () =>
         import(/* webpackChunkName: "believers" */ './views/Believers.vue')
+    },
+    {
+      path: '/churches',
+      name: 'churches',
+      props: true,
+      beforeEnter: (to, from, next) => {
+        if (to.params.user) {
+          next()
+        } else {
+          next({ name: 'login' })
+        }
+      },
+      component: () =>
+        import(/* webpackChunkName: "churches" */ './views/Churches.vue')
     }
   ]
 })
