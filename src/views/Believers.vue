@@ -82,10 +82,9 @@
 </template>
 
 <script>
-import axios from "@/axios-auth";
+import axios from "@/plugins/axios-auth";
 import Churches from "@/components/Churches";
 import BelieverDetail from "@/components/BelieverDetail";
-
 export default {
   name: "Believers",
   components: {

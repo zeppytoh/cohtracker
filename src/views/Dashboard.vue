@@ -1,94 +1,131 @@
 <template>
-  <div class="dashboard">
-    <v-container class="my-5">
-      <h1 class="subheading grey--text">Dashboard</h1>
-      <v-layout class="mb-3" row>
-        <v-btn small flat color="grey">
-          <v-icon left small>folder</v-icon>
-          <span class="caption text-lowercase">By project name</span>
-        </v-btn>
-        <v-btn small flat color="grey">
-          <v-icon left small>person</v-icon>
-          <span class="caption text-lowercase">By person</span>
-        </v-btn>
+  <div id="pageDashboard">
+    <v-container grid-list-xl fluid>
+      <v-layout row wrap>
+        <!-- mini statistic start -->
+        <v-flex lg3 sm6 xs12>
+          <mini-statistic icon="school" title="100+" sub-title="Likes" color="#330000"></mini-statistic>
+        </v-flex>
+        <v-flex lg3 sm6 xs12>
+          <mini-statistic icon="person" title="150+" sub-title="Connections" color="red"></mini-statistic>
+        </v-flex>
+        <v-flex lg3 sm6 xs12>
+          <mini-statistic icon="work" title="200+" sub-title="Followers" color="light-blue"></mini-statistic>
+        </v-flex>
+        <v-flex lg3 sm6 xs12>
+          <mini-statistic icon="phone" title="50+" sub-title="Shots" color="purple"></mini-statistic>
+        </v-flex>
+        <!-- mini statistic  end -->
       </v-layout>
-      <v-card flat v-for="project in projects" :key="project.title">
-        <v-layout row wrap justify-start :class="`pa-3 project ${project.status}`">
-          <v-flex xs12 md6>
-            <div class="caption grey--text">Project Title</div>
-            <div>{{ project.title }}</div>
-          </v-flex>
-          <v-flex xs6 sm4 md2>
-            <div class="caption grey--text">By</div>
-            <div>{{ project.person }}</div>
-          </v-flex>
-          <v-flex xs6 sm4 md2>
-            <div class="caption grey--text">Due</div>
-            <div>{{ project.due }}</div>
-          </v-flex>
-          <v-flex xs2 sm4 md2>
-            <div>
-              <v-chip small :class="`${project.status} white--text caption my-2`">{{project.status}}</v-chip>
-            </div>
-          </v-flex>
-        </v-layout>
-      </v-card>
+    </v-container>
+    <v-container fluid grid-list-xl class="my-2">
+      <v-layout row wrap>
+        <v-flex class="pa-2" xs12>
+          <churches/>
+        </v-flex>
+      </v-layout>
     </v-container>
   </div>
 </template>
 
 <script>
+import Churches from "@/components/Churches";
+
 export default {
-  data() {
-    return {
-      projects: [
-        {
-          title: "Create a New Website",
-          person: "Tsan Yao",
-          due: "10-Mar-219",
-          status: "ongoing"
+  data: () => ({
+    components: {
+      Churches
+    },
+    selectedTab: "tab-1",
+    linearTrending: [
+      {
+        subheading: "Sales",
+        headline: "2,55",
+        caption: "increase",
+        percent: 15,
+        icon: {
+          label: "trending_up",
+          color: "success"
         },
-        {
-          title: "Research a new Persona",
-          person: "Andrew Yu",
-          due: "5-Apr-2019",
-          status: "complete"
-        },
-        {
-          title: "Next MPDx Tool",
-          person: "Tataihono N",
-          due: "1-May-2019",
-          status: "ongoing"
-        },
-        {
-          title: "Digital Marketing for JCCC",
-          person: "Victor Toh",
-          due: "31-July-2019",
-          status: "overdue"
+        linear: {
+          value: 15,
+          color: "success"
         }
-      ]
-    };
-  }
+      },
+      {
+        subheading: "Revenue",
+        headline: "6,553",
+        caption: "increase",
+        percent: 10,
+        icon: {
+          label: "trending_down",
+          color: "error"
+        },
+        linear: {
+          value: 15,
+          color: "error"
+        }
+      },
+      {
+        subheading: "Orders",
+        headline: "5,00",
+        caption: "increase",
+        percent: 50,
+        icon: {
+          label: "arrow_upward",
+          color: "info"
+        },
+        linear: {
+          value: 50,
+          color: "info"
+        }
+      }
+    ],
+    trending: [
+      {
+        subheading: "Email",
+        headline: "15+",
+        caption: "email opens",
+        percent: 15,
+        icon: {
+          label: "email",
+          color: "info"
+        },
+        linear: {
+          value: 15,
+          color: "info"
+        }
+      },
+      {
+        subheading: "Tasks",
+        headline: "90%",
+        caption: "tasks completed.",
+        percent: 90,
+        icon: {
+          label: "list",
+          color: "primary"
+        },
+        linear: {
+          value: 90,
+          color: "success"
+        }
+      },
+      {
+        subheading: "Issues",
+        headline: "100%",
+        caption: "issues fixed.",
+        percent: 100,
+        icon: {
+          label: "bug_report",
+          color: "primary"
+        },
+        linear: {
+          value: 100,
+          color: "error"
+        }
+      }
+    ]
+  }),
+  computed: {}
 };
 </script>
-
-<style scope>
-.project.complete {
-  border-left: 4px solid #3cd1c2;
-}
-.project.ongoing {
-  border-left: 4px solid orange;
-}
-.project.overdue {
-  border-left: 4px solid tomato;
-}
-.v-chip.complete {
-  background-color: #3cd1c2;
-}
-.v-chip.ongoing {
-  background-color: orange;
-}
-.v-chip.overdue {
-  background-color: tomato;
-}
-</style>

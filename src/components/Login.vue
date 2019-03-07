@@ -27,20 +27,20 @@
     <v-card-actions class="pa-3">
       <span v-if="feedback">{{ feedback }}</span>
       <v-spacer></v-spacer>
-      <v-btn color="primary" :disabled="!valid" @click.prevent.stop="submit">submit</v-btn>
+      <v-btn color="primary" :disabled="!valid" @click.prevent.stop="submit" @keyup="submit">submit</v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
-import axios from "@/axios-auth";
+import { mapActions } from "vuex";
 export default {
   data() {
     return {
       valid: false,
       feedback: null,
-      username: null,
-      password: null,
+      username: "dillon@cru.org.sg",
+      password: "469717",
 
       user: [],
       errors: []
@@ -50,33 +50,13 @@ export default {
     this.feedback = null;
   },
   methods: {
+    ...mapActions(["authUser"]),
     submit() {
       this.feedback = "Checking credentials...";
-      axios
-        .post("/login", {
-          UserName: this.username,
-          Password: this.password
-        })
-        .then(res => {
-          this.user = res.data;
-          this.feedback = "User loaded!";
-          if (this.user["Role"] === "super-admin") {
-            this.$router.push({
-              name: "churches",
-              params: { user: this.user }
-            });
-          } else {
-            this.$router.push({
-              name: "believers",
-              // params: { accessToken: this.user["AccessToken"] }
-              params: { user: this.user }
-            });
-          }
-        })
-        .catch(error => {
-          this.feedback = "You entered a wrong username / password";
-          this.errors.push(error);
-        });
+      this.authUser({
+        username: this.username,
+        password: this.password
+      });
     }
   }
 };

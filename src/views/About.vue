@@ -1,5 +1,10 @@
 <template>
   <div class="about">
+    <v-layout row>
+      <v-flex xs12 sm10 offset-sm1>
+        <contacts/>
+      </v-flex>
+    </v-layout>
     <v-container class="my-5">
       <h1 class="subheading grey--text">Near-Earth Objects</h1>
       <v-layout class="mb-3" row>
@@ -46,8 +51,11 @@
 
 <script>
 import axios from "axios";
-
+import Contacts from "@/components/Contacts";
 export default {
+  components: {
+    Contacts
+  },
   data() {
     return {
       asteroids: [],

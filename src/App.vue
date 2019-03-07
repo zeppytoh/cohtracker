@@ -1,26 +1,26 @@
 <template>
   <v-app>
-    <Navbar/>
-    <v-content class="contentGradient">
-      <router-view></router-view>
-    </v-content>
-    <v-footer app class="px-3">{{ copyrighttext }}</v-footer>
+    <core-navbar/>
+    <core-drawer/>
+    <core-view/>
+    <!-- <v-footer app dark inset color="secondary" class="px-3">
+      <span class="align-center">{{ copyrighttext }}</span>
+    </v-footer>-->
   </v-app>
 </template>
 
 <script>
-import Navbar from "@/components/Navbar";
-
 export default {
   name: "App",
-  components: {
-    Navbar
-  },
+
   data() {
     return {
       //
       copyrighttext: "Celebration of Hope Singapore 2019"
     };
+  },
+  created() {
+    this.$store.dispatch("tryAutoLogin");
   }
 };
 </script>
@@ -33,13 +33,5 @@ export default {
 //   text-align: center;
 //   color: #2c3e50;
 // }
-
-.v-content.contentGradient {
-  background-image: linear-gradient(
-    to bottom,
-    var(--v-accent-base),
-    var(--v-secondary-base)
-  );
-}
 </style>
 

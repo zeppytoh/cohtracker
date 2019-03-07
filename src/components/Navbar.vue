@@ -1,5 +1,22 @@
 <template>
   <nav>
+    <v-toolbar fixed dark clipped-right app class="coh-toolbar">
+      <v-btn color="primary" small flat router :to="{name : 'home'}">
+        <v-img :src="require('../assets/COH_Eng_White-300.png')" contain height="64"></v-img>
+      </v-btn>
+
+      <v-spacer></v-spacer>
+      <v-toolbar-items>
+        <v-toolbar-side-icon @click.prevent.stop="drawer = !drawer"></v-toolbar-side-icon>
+      </v-toolbar-items>
+
+      <!-- <v-spacer></v-spacer>
+      <v-btn flat>
+        <span>Welcome, admin
+          <v-icon right>exit_to_app</v-icon>
+        </span>
+      </v-btn>-->
+    </v-toolbar>
     <v-navigation-drawer app dark clipped right v-model="drawer" class="secondary darken-1">
       <v-layout column align-center>
         <v-flex class="mt-5">
@@ -18,23 +35,7 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar fixed dark clipped-right app class="coh-toolbar">
-      <v-btn color="primary" small flat router :to="{name : 'login'}">
-        <v-img :src="require('../assets/COH_Eng_White-300.png')" contain height="64"></v-img>
-      </v-btn>
-
-      <v-spacer></v-spacer>
-      <v-toolbar-items>
-        <v-toolbar-side-icon @click.prevent.stop="drawer = !drawer"></v-toolbar-side-icon>
-      </v-toolbar-items>
-
-      <!-- <v-spacer></v-spacer>
-      <v-btn flat>
-        <span>Welcome, admin
-          <v-icon right>exit_to_app</v-icon>
-        </span>
-      </v-btn>-->
-    </v-toolbar>
+    
   </nav>
 </template>
 
@@ -48,8 +49,13 @@ export default {
       links: [
         {
           icon: "person",
-          text: "Believers",
-          routename: "believers"
+          text: "Contacts",
+          routename: "churchadmin"
+        },
+        {
+          icon: "info",
+          text: "About",
+          routename: "about"
         }
       ]
     };

@@ -1,20 +1,37 @@
 <template>
-  <div>
-    <v-card v-for="church in churches" :key="church.Name">
-      <v-layout row wrap justify-start class="pa-3 person">
-        <v-flex xs12 md6>
-          <div class="caption grey--text">Name</div>
-          <span class="title">{{church.Name}}</span>
-        </v-flex>
-      </v-layout>
-    </v-card>
-  </div>
+  <v-container>
+    <v-layout row wrap>
+      <v-flex class="pa-0">
+        <v-expansion-panel class="elevation-0">
+          <v-expansion-panel-content v-for="(church,i) in churches" :key="i">
+            <v-layout slot="header" row wrap>
+              <v-flex xs6>
+                <div class="caption grey--text">Church name</div>
+                <div>{{ church.Name }}</div>
+              </v-flex>
+              <v-flex xs6>
+                <v-btn color="secondary" @click="viewContactList(church)">View</v-btn>
+              </v-flex>
+            </v-layout>
+            <v-card>
+              <v-card-text>{{ church.Address }}</v-card-text>
+            </v-card>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
-import axios from "@/axios-auth";
+import { mapActions, mapGetters } from "vuex";
+import router from "@/router";
+
 export default {
   name: "Churches",
+  computed: {
+    ...mapGetters(["AccessToken"])
+  },
   data() {
     return {
       churches: [],
@@ -22,24 +39,43 @@ export default {
     };
   },
   created() {
-    this.fetchChurches();
+    this.fetchChurches()
+      .then(res => {
+        this.churches = res;
+        console.log(this.churches);
+      })
+      .catch(error => {
+        console.log("There was an error:", error.response);
+      });
   },
   methods: {
-    fetchChurches() {
-      var APIKey = "f912f198-e443-11e8-a9c5-89e884cb2e41";
-      var url =
-        "https://etwl67dlx2.execute-api.ap-southeast-1.amazonaws.com/staging/v1/churches?AccessToken=d78985fdc79388a1854ffb133dd4f619?APIKey=" +
-        APIKey;
-      axios
-        .get(url)
-        .then(res => {
-          this.churches = res.data;
-        })
-        .catch(error => this.errors.push(error));
+    ...mapActions(["fetchChurches", "setChurch"]),
+    viewContactList(church) {
+      this.setChurch(church);
+      router.push({
+        name: "churchadmin",
+        params: { postcode: church.Postcode }
+      });
     }
   }
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+.v-expansion-panel__container--active {
+  .v-expansion-panel__header {
+    background-color: rgba(0, 0, 0, 0);
+  }
+  .v-expansion-panel__body {
+    .v-card {
+      border-radius: 0.6rem;
+    }
+  }
+}
+.v-expansion-panel__container {
+  border-top-right-radius: 0.6rem;
+  border-bottom-right-radius: 0.6rem;
+  border-left: 6px solid var(--v-secondary-lighten2);
+  margin-bottom: 4px;
+}
 </style>

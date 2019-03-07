@@ -1,55 +1,69 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-// import Dashboard from './views/Dashboard.vue'
-import Login from '@/views/Login.vue'
+import Vue from "vue";
+import Router from "vue-router";
+import store from "@/store";
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
-  mode: 'history',
+  mode: "history",
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/',
-      name: 'login',
-      component: Login
+      path: "/",
+      name: "home",
+      component: () =>
+        import(/* webpackChunkName: "routes" */ "./views/Login.vue")
     },
     {
-      path: '/about',
-      name: 'about',
+      path: "/dashboard",
+      name: "dashboard",
+
+      component: () =>
+        import(/* webpackChunkName: "routes" */ "./views/Dashboard.vue")
+    },
+    {
+      path: "/login",
+      name: "login",
+      component: () =>
+        import(/* webpackChunkName: "routes" */ "./views/Login.vue")
+    },
+    {
+      path: "/about",
+      name: "about",
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () =>
-        import(/* webpackChunkName: "about" */ './views/About.vue')
+        import(/* webpackChunkName: "routes" */ "./views/About.vue")
     },
     {
-      path: '/believers',
-      name: 'believers',
+      path: "/churchadmin/:postcode?",
+      name: "churchadmin",
       props: true,
       beforeEnter: (to, from, next) => {
-        if (to.params.user) {
-          next()
+        if (store.state.AccessToken) {
+          console.log("about to route");
+          next();
         } else {
-          next({ name: 'login' })
+          next({ name: "home" });
         }
       },
       component: () =>
-        import(/* webpackChunkName: "believers" */ './views/Believers.vue')
+        import(/* webpackChunkName: "routes" */ "./views/ChurchAdmin.vue")
     },
     {
-      path: '/churches',
-      name: 'churches',
+      path: "/churches",
+      name: "churches",
       props: true,
       beforeEnter: (to, from, next) => {
-        if (to.params.user) {
-          next()
+        if (store.state.AccessToken) {
+          next();
         } else {
-          next({ name: 'login' })
+          next({ name: "home" });
         }
       },
       component: () =>
-        import(/* webpackChunkName: "churches" */ './views/Churches.vue')
+        import(/* webpackChunkName: "routes" */ "./views/Churches.vue")
     }
   ]
-})
+});
