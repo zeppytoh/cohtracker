@@ -21,12 +21,14 @@ export default {
   },
   fetchContacts(data) {
     // fetch contacts with params = data.AccessToken and data.ChurchPostcode
-    return apiClient.get(
-      "/believers?AccessToken=" +
-        data.AccessToken +
-        "&ChurchPostcode=" +
-        data.ChurchPostcode
-    );
+    var apiString = "";
+    if (data.AccessToken) {
+      apiString = "/believers?AccessToken=" + data.AccessToken;
+    }
+    if (data.ChurchID) {
+      apiString += "&ChurchID=" + data.ChurchID;
+    }
+    return apiClient.get(apiString);
   },
   fetchChurches(data) {
     // fetch churches for super-admin with params = data.AccessToken

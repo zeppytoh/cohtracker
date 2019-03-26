@@ -1,9 +1,17 @@
 <template>
-  <v-navigation-drawer app dark clipped left v-model="drawer" class="secondary darken-1">
+  <v-navigation-drawer
+    v-if="isAuthenticated"
+    app
+    dark
+    clipped
+    left
+    v-model="drawer"
+    class="secondary darken-1"
+  >
     <v-img :src="image" height="100%">
       <v-layout class="overlay fill-height" tag="v-list" column>
         <v-list>
-          <v-list-tile v-for="link in links" :key="link.text" router :to="{name: link.routename}">
+          <v-list-tile v-for="link in links" :key="link.text" router :to="{path: link.routename}">
             <v-list-tile-action>
               <v-icon class="white--text">{{ link.icon }}</v-icon>
             </v-list-tile-action>
@@ -18,7 +26,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from "vuex";
+import { mapGetters, mapMutations, mapState } from "vuex";
 
 export default {
   data() {
@@ -27,33 +35,26 @@ export default {
         {
           icon: "dashboard",
           text: "Dashboard",
-          routename: "dashboard"
+          routename: "/dashboard"
         },
         {
           icon: "person",
           text: "Contacts",
-          routename: "churchadmin"
-        },
-        {
-          icon: "info",
-          text: "About",
-          routename: "about"
+          routename: "/dashboard/contacts"
         }
       ]
     };
   },
   computed: {
-    ...mapState("ui", ["image", "color"]),
+    ...mapState(["image", "color"]),
+    ...mapGetters(["isAuthenticated"]),
     drawer: {
       get() {
-        return this.$store.state.ui.drawer;
+        return this.$store.state.drawer;
       },
       set(val) {
         this.setDrawer(val);
       }
-    },
-    items() {
-      return this.$t("Layout.View.items");
     }
   },
   mounted() {
@@ -64,7 +65,7 @@ export default {
     window.removeEventListener("resize", this.onResponsiveInverted);
   },
   methods: {
-    ...mapMutations("ui", ["setDrawer", "toggleDrawer"]),
+    ...mapMutations(["setDrawer", "toggleDrawer"]),
     onResponsiveInverted() {
       if (window.innerWidth < 991) {
         this.responsive = true;
@@ -73,7 +74,7 @@ export default {
       }
     },
     onClickBtn() {
-      this.setDrawer(!this.$store.state.ui.drawer);
+      this.setDrawer(!this.$store.state.drawer);
     }
   }
 };

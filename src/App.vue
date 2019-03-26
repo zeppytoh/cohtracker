@@ -1,37 +1,35 @@
 <template>
   <v-app>
-    <core-navbar/>
-    <core-drawer/>
-    <core-view/>
-    <!-- <v-footer app dark inset color="secondary" class="px-3">
-      <span class="align-center">{{ copyrighttext }}</span>
-    </v-footer>-->
+    <Navbar/>
+    <Drawer/>
+    <ContentView/>
+    <Snackbar/>
   </v-app>
 </template>
 
 <script>
+import Navbar from "./components/Navbar";
+import Drawer from "./components/Drawer";
+import ContentView from "./components/ContentView";
+import Snackbar from "./components/Snackbar";
+
 export default {
   name: "App",
-
+  components: {
+    Navbar,
+    Drawer,
+    ContentView,
+    Snackbar
+  },
   data() {
     return {
       //
-      copyrighttext: "Celebration of Hope Singapore 2019"
     };
   },
   created() {
-    this.$store.dispatch("tryAutoLogin");
+    if (this.$store.dispatch("tryAutoLogin")) {
+      this.$router.replace("dashboard");
+    }
   }
 };
 </script>
-
-<style lang="scss">
-// #app {
-//   font-family: "overpass", Helvetica, Arial, sans-serif;
-//   -webkit-font-smoothing: antialiased;
-//   -moz-osx-font-smoothing: grayscale;
-//   text-align: center;
-//   color: #2c3e50;
-// }
-</style>
-

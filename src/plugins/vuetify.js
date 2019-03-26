@@ -1,16 +1,16 @@
 import Vue from "vue";
-import Vuetify, { VExpansionPanel } from "vuetify/lib";
-
+import Vuetify, { VExpansionPanel, VLayout } from "vuetify/lib";
 import "@/stylus/main.styl";
 
 Vue.use(Vuetify, {
   components: {
-    VExpansionPanel
+    VExpansionPanel,
+    VLayout
   },
   theme: {
     primary: "#F26A1B",
     secondary: "#5C73B9",
-    accent: "#D4F4EE",
+    accent: "#C4E4DE",
     error: "#FF5252",
     info: "#394464",
     success: "#D4F4EE",

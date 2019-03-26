@@ -1,25 +1,15 @@
 <template>
-  <v-container fluid fill-height>
-    <v-layout align-center justify-center>
-      <v-flex xs12 sm8 md4>
-        <Login/>
-      </v-flex>
-    </v-layout>
-  </v-container>
+  <v-content>
+    <HelloWorld/>
+  </v-content>
 </template>
+
 <script>
-import Login from "@/components/Login";
+import HelloWorld from "../components/HelloWorld";
+
 export default {
   components: {
-    Login
-  },
-  data() {
-    return {};
-  },
-
-  methods: {}
+    HelloWorld
+  }
 };
 </script>
-
-<style>
-</style>

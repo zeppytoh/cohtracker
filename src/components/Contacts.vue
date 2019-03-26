@@ -1,143 +1,361 @@
 <template>
-  <v-card>
-    <v-toolbar color="accent" flat>
-      <v-toolbar-title>Contacts</v-toolbar-title>
-
-      <v-spacer></v-spacer>
-
-      <v-btn icon>
-        <v-icon>more_vert</v-icon>
-      </v-btn>
-    </v-toolbar>
-
-    <v-list two-line subheader>
-      <!-- <v-subheader inset>Contacts</v-subheader> -->
-      <v-list-group
-        v-for="contact in contacts"
-        :key="contact.RandomID"
-        :prepend-icon="`person`"
-        no-action
-        :class="`${statusColor(contact.BelieverStatus)} contact`"
-        active-class="secondary--text"
+  <div>
+    <filter-drawer/>
+    <v-container fluid grid-list-md>
+      <v-data-iterator
+        row
+        wrap
+        :items="contacts"
+        item-key="BelieverID"
+        :rows-per-page-items="rowsPerPageItems"
+        pagination.sync="pagination"
+        content-tag="v-layout"
+        :custom-filter="filterContacts"
+        :filter="filterMultiple"
+        :expand="expand"
+        :search="searchTerm"
       >
-        <v-list-tile slot="activator">
-          <v-list-tile-content>
-            <v-list-tile-title>{{ contact.FullName }}&nbsp; {{ contact.Gender }}</v-list-tile-title>
-            <v-list-tile-sub-title>{{contact.MobileNumber}}</v-list-tile-sub-title>
-          </v-list-tile-content>
-          <v-list-tile-action>
-            <v-btn icon ripple>
-              <v-icon>info</v-icon>
+        <template v-slot:header>
+          <v-toolbar color="transparent" prominent flat>
+            <v-select
+              v-model="languageFilterValue"
+              item-value="value"
+              item-text="name"
+              :items="languageFilter"
+            >
+              <template v-slot:selection="{ item, index }">
+                <v-chip color="accent" class="caption">
+                  <span>{{ item.name }}</span>
+                </v-chip>
+              </template>
+            </v-select>
+            <v-select
+              v-model="decisionFilterValue"
+              item-value="value"
+              item-text="name"
+              :items="decisionFilter"
+            >
+              <template v-slot:selection="{ item, index }">
+                <v-chip color="accent" class="caption">
+                  <span>{{ item.name }}</span>
+                </v-chip>
+              </template>
+            </v-select>
+            <v-select
+              v-model="statusFilterValue"
+              item-value="value"
+              item-text="name"
+              :items="statusFilter"
+            >
+              <template v-slot:selection="{ item, index }">
+                <v-chip color="accent" class="caption">
+                  <span>{{ item.name }}</span>
+                </v-chip>
+              </template>
+            </v-select>
+
+            <v-btn color="transparent" icon small @click.prevent="removeFilters">
+              <v-icon color="secondary">layers_clear</v-icon>
             </v-btn>
-          </v-list-tile-action>
-        </v-list-tile>
-        <v-card flat>
-          <v-layout row wrap justify-start class="pa-4">
-            <v-flex xs12 md6>
-              <div class="caption grey--text">E-mail</div>
-              <div>{{ contact.EmailAddress }}</div>
-            </v-flex>
+            <v-btn hidden-sm-and-up color="transparent" icon small @click.prevent="onToggleFilter">
+              <v-icon color="secondary">filter_list</v-icon>
+            </v-btn>
+          </v-toolbar>
+        </template>
+        <template v-slot:item="props">
+          <v-flex xs12 sm6>
+            <v-card
+              :class="`${believerStatus[props.item.BelieverStatus].text} contact pa-1 ma-0`"
+              light
+            >
+              <v-card-title primary-title>
+                <v-layout row wrap>
+                  <v-flex xs8>
+                    <div>{{ props.item.FirstName }}&nbsp;{{ props.item.LastName }}&nbsp;{{ props.item.FirstName }}</div>
+                    <span>{{ props.item.MobileNumber }}</span>
+                  </v-flex>
+                  <v-flex xs4>
+                    <v-edit-dialog
+                      v-if="$store.state.Role=='church-admin'"
+                      :return-value.sync="props.item.BelieverStatus"
+                      lazy
+                      large
+                      persistent
+                      @save="saveContact(props.item)"
+                      @cancel="cancel"
+                      disabled
+                      class="right"
+                    >
+                      <v-btn
+                        small
+                        :color="believerStatus[props.item.BelieverStatus].color"
+                        class="caption mx-0 my-0 pa-0"
+                        @click.prevent
+                      >{{believerStatus[props.item.BelieverStatus].text}}</v-btn>
 
-            <v-flex id="dropdown-status" xs6>
-              <v-select
-                :items="believer_status_text"
-                item-text="name"
-                item-value="value"
-                v-model="contact.BelieverStatus"
-                @click="updateContact(contact)"
-              ></v-select>
+                      <template v-slot:input>
+                        <v-select
+                          :items="options"
+                          item-value="value"
+                          item-text="name"
+                          label="Click to change status"
+                          flat
+                          dense
+                          v-model="props.item.BelieverStatus"
+                        ></v-select>
+                        <v-text-field
+                          v-if="props.item.BelieverStatus !== '2'"
+                          v-model="logMessage"
+                          label="Please share why you're making the change"
+                          :rules="['Required']"
+                          required
+                          autofocus
+                        ></v-text-field>
+                      </template>
+                    </v-edit-dialog>
+                    <template v-else>
+                      <v-btn
+                        small
+                        :color="believerStatus[props.item.BelieverStatus].color"
+                        class="elevation-0 white--text caption mx-0 my-0 pa-0"
+                        @click.prevent
+                      >{{believerStatus[props.item.BelieverStatus].text}}</v-btn>
+                    </template>
+                  </v-flex>
+                </v-layout>
+              </v-card-title>
+              <v-card-actions>
+                <v-btn
+                  @click="showContactHistory(props.item.BelieverID)"
+                  flat
+                  icon
+                  small
+                  color="secondary lighten-1"
+                >
+                  <v-icon>history</v-icon>
+                </v-btn>
+                <v-spacer></v-spacer>
 
-              <believer-detail :Believer="contact"/>
-              <!-- <v-overflow-btn
-                :items="believer_status_text"
-                label="Status"
-                target="#dropdown-status"
-                depressed
-                small
-                color="primary"
-              >{{ statusText(contact.BelieverStatus) }}</v-overflow-btn>-->
-              <!-- <v-chip
-                small
-                :class="`white--text caption my-2`"
-              ></v-chip>-->
-            </v-flex>
-          </v-layout>
-        </v-card>
-        <!-- <v-list-tile v-for="subItem in item.items" :key="subItem.title" @click>
-              <v-list-tile-content>
-                <v-list-tile-title>{{ subItem.title }}</v-list-tile-title>
-              </v-list-tile-content>
+                <v-btn small icon @click.stop="props.expanded = !props.expanded">
+                  <v-icon>{{ props.expanded ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
+                </v-btn>
+              </v-card-actions>
+              <v-slide-y-transition>
+                <v-card
+                  class="ma-1 elevation-0"
+                  light
+                  color="grey lighten-4"
+                  v-if="props.expanded == true"
+                >
+                  <v-layout row wrap class="ma-0">
+                    <v-flex xs12>
+                      <div class="caption grey--text">Notes</div>
+                      <div>{{ props.item.AdditionalComments }}</div>
+                    </v-flex>
+                    <v-flex xs8>
+                      <div class="caption grey--text">Decision</div>
+                      <div>{{ decisionText[props.item.DecisionMade] }}</div>
+                    </v-flex>
+                    <v-flex xs4>
+                      <div class="caption grey--text">Language</div>
+                      <div>{{ props.item.LanguageType }}</div>
+                    </v-flex>
+                    <v-flex xs12>
+                      <div class="caption grey--text">Age Group</div>
+                      <div>{{ ageGroups[props.item.AgeGroup] }}</div>
+                    </v-flex>
+                    <v-flex xs8>
+                      <div class="caption grey--text">Friend</div>
+                      <div>{{ props.item.NameOfFriend }}</div>
+                    </v-flex>
+                    <v-flex xs4>
+                      <div class="caption grey--text">Friend's Church</div>
+                      <div>{{ props.item.FriendChurchPostcode }}</div>
+                    </v-flex>
 
-              <v-list-tile-action>
-                <v-icon>more</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-action>
-                <v-icon>{{ subItem.action }}</v-icon>
-              </v-list-tile-action>
-        </v-list-tile>-->
-      </v-list-group>
-    </v-list>
-  </v-card>
+                    <!-- <v-flex xs2 sm4 md2>
+            <div>
+              <v-chip small :class="`${project.status} white--text caption my-2`">{{project.status}}</v-chip>
+            </div>
+                    </v-flex>-->
+                  </v-layout>
+                </v-card>
+              </v-slide-y-transition>
+            </v-card>
+          </v-flex>
+        </template>
+      </v-data-iterator>
+    </v-container>
+  </div>
 </template>
+
 <script>
-import { mapActions } from "vuex";
-import BelieverDetail from "@/components/BelieverDetail";
+import { mapState, mapMutations, mapActions } from "vuex";
+import FilterDrawer from "@/components/FilterDrawer";
 export default {
   components: {
-    BelieverDetail
+    FilterDrawer
+  },
+  props: ["churchid"],
+  computed: {
+    ...mapState([
+      "loading",
+      "Church",
+      "FullName",
+      "ageGroups",
+      "ageGroupsMap",
+      "believerStatus",
+      "decisionText",
+      "drawerRight"
+    ]),
+    thePostcode: function() {
+      return this.churchid === "" ? "000000" : this.churchid;
+    }
+  },
+  watch: {
+    $route(to) {
+      this.searchTerm = to.query;
+      this.languageFilterValue = this.searchTerm.language || null;
+      this.statusFilterValue = this.searchTerm.status || null;
+      this.decisionFilterValue = this.searchTerm.decision || null;
+    },
+    languageFilterValue: function() {
+      this.searchTerm = {
+        language: this.languageFilterValue,
+        status: this.statusFilterValue,
+        decision: this.decisionFilterValue
+      };
+    },
+    statusFilterValue: function() {
+      this.searchTerm = {
+        language: this.languageFilterValue,
+        status: this.statusFilterValue,
+        decision: this.decisionFilterValue
+      };
+    },
+    decisionFilterValue: function() {
+      this.searchTerm = {
+        language: this.languageFilterValue,
+        status: this.statusFilterValue,
+        decision: this.decisionFilterValue
+      };
+    }
+  },
+  created() {
+    const data = this.churchid;
+    console.log(this.churchid);
+    this.fetchContacts(data)
+      .then(res => {
+        this.contacts = res;
+        this.setLoading(false);
+      })
+      .catch(error => {
+        console.log("There was an error fetching Contacts:", error.response);
+      });
   },
   data() {
     return {
-      believer_status_text: [
-        { name: "Pending Follow-Up", value: "1" },
-        { name: "Contact", value: "2" },
-        { name: "Uncontactable", value: "3" },
-        { name: "Request Re-assignment", value: "4" },
-        { name: "To Re-assign", value: "5" }
-      ]
+      contacts: [],
+      expand: false,
+      filterDrawer: false,
+      options: [
+        { name: "pending", value: "1" },
+        { name: "contacted", value: "2" },
+        { name: "missing", value: "3" },
+        { name: "reassign", value: "4" }
+      ],
+      languageFilter: [
+        { name: "English", value: "English" },
+        { name: "Mandarin", value: "Mandarin" },
+        { name: "Tamil", value: "Tamil" },
+        { name: "Indonesian", value: "Indonesian" },
+        { name: "Hindi", value: "Hindi" },
+        { name: "Tagalog", value: "Tagalog" },
+        { name: "Children", value: "Children" },
+        { name: "None", value: null }
+      ],
+      statusFilter: [
+        { name: "pending", value: "1" },
+        { name: "contacted", value: "2" },
+        { name: "missing", value: "3" },
+        { name: "reassign", value: "4" },
+        { name: "None", value: null }
+      ],
+      decisionFilter: [
+        { name: "PRC", value: "A" },
+        { name: "Rededicated", value: "B" },
+        { name: "Interested", value: "C" },
+        { name: "Like to join a church", value: "D" },
+        { name: "Others", value: "E" },
+        { name: "None", value: null }
+      ],
+      statusFilterValue: null,
+      languageFilterValue: null,
+      decisionFilterValue: null,
+      max25chars: v => v.length <= 35 || "Input too long!",
+      searchTerm: null,
+      pagination: {
+        rowsPerPage: 10
+      },
+      logMessage: "",
+      iconIndex: 0
     };
   },
-  props: ["contacts"],
   methods: {
-    ...mapActions(["updateContact"]),
+    ...mapActions(["updateContact", "fetchContacts"]),
+    ...mapMutations(["toggleDrawerRight", "setMobile"]),
+    onToggleFilter() {
+      this.toggleDrawerRight();
+    },
+    removeFilters() {
+      this.searchTerm = this.languageFilterValue = this.statusFilterValue = this.decisionFilterValue = null;
+    },
 
-    getDateString(value) {
-      var d = new Date(value * 1000);
-      return d.toLocaleString();
+    filterMultiple(item) {
+      // searchTerm == { language: null ? 'english', status: null ? '1' }
+
+      return (
+        (this.searchTerm["language"]
+          ? item.LanguageType === this.searchTerm["language"]
+          : true) &&
+        (this.searchTerm["status"]
+          ? item.BelieverStatus === this.searchTerm["status"]
+          : true) &&
+        (this.searchTerm["decision"]
+          ? item.DecisionMade === this.searchTerm["decision"]
+          : true)
+      );
     },
-    statusText: function(value) {
-      if (value > 0 && value <= 5) return this.believer_status_text[value - 1];
-      else return "Error";
+    filterContacts(items, search, filterFunction) {
+      const filteredItems = items.filter(filterFunction);
+      return filteredItems;
     },
-    statusColor: function(value) {
-      switch (value) {
-        case "1":
-          return "pending";
-        case "2":
-          return "tocontact";
-        case "3":
-          return "uncontactable";
-        case "4":
-          return "reassign";
-        case "5":
-          return "reassign";
-        default:
-          return "none";
-      }
+
+    saveContact(contact) {
+      const payload = {
+        BelieverID: contact.BelieverID,
+        BelieverStatus: contact.BelieverStatus,
+        ChangeLog: this.logMessage,
+        ChurchID: this.thePostcode
+      };
+      this.updateContact(payload);
     },
-    decisionText: function(code) {
-      switch (code) {
-        case "A":
-          return "prayed";
-        case "B":
-          return "rededicated";
-        case "C":
-          return "interested";
-        case "D":
-          return "church";
-        default:
-          return "default";
-      }
+    cancel() {
+      //
+    },
+    open() {},
+    close() {
+      console.log("Dialog closed");
+    },
+    showContactHistory(id) {
+      console.log(id);
+      this.$router.push({
+        path: "/dashboard/contacts/history/" + id
+      });
+    },
+    onResize() {
+      if (window.innerWidth < 769) this.setMobile(true);
+      else this.setMobile(false);
     }
   }
 };
@@ -145,43 +363,26 @@ export default {
 
 <style lang="scss">
 .contact {
-  border-left: 0.5rem solid gray;
-
-  &.default {
-    border-color: var(--v-primary-lighten1);
-    .v-btn--icon {
-      color: var(--v-primary-lighten1);
-    }
-  }
-  &.tocontact {
-    border-color: pink;
-    .v-btn--icon {
-      color: pink;
-    }
-  }
+  border-top-right-radius: 0.6rem;
+  border-bottom-right-radius: 0.6rem;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left: 6px solid grey;
+  margin-bottom: 4px;
   &.pending {
-    border-color: lightblue;
-    .v-btn--icon {
-      color: lightblue;
-    }
+    border-left: 6px solid var(--v-warning-lighten2);
   }
-  margin: 0.5rem 0 0.5rem 0;
-  &.v-list__group--active {
-    margin-left: -0.4rem;
+  &.missing {
+    border-left: 6px solid var(--v-grey-darken1);
   }
-  .v-list__group__header__prepend-icon {
-    margin-right: -0.5rem;
+  &.uncontactable {
+    border-left: 6px solid var(--v-grey-darken1);
   }
-  .v-btn--icon {
-    .default & {
-      color: var(--v-primary-lighten1);
-    }
-    .pending & {
-      color: pink;
-    }
-    .rededicated & {
-      color: lightblue;
-    }
+  &.contacted {
+    border-left: 6px solid var(--v-success-darken1);
+  }
+  &.reassign {
+    border-left: 6px solid var(--v-primary-lighten1);
   }
 }
 </style>

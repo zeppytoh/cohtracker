@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-flex v-resize="onResize" xs12 class="ma-0 pa-0">
     <v-data-iterator
       :items="contacts"
       :pagination.sync="pagination"
@@ -10,16 +10,15 @@
       :search="searchTerm"
     >
       <template v-slot:header>
-        <v-toolbar style="background-color: rgba(0,0,0,0)" flat prominent>
+        <v-toolbar color="transparent" prominent flat>
           <v-select
             v-model="languageFilterValue"
             item-value="value"
             item-text="name"
             :items="languageFilter"
-            label="Language Filter"
           >
             <template v-slot:selection="{ item, index }">
-              <v-chip dark color="secondary">
+              <v-chip dark color="secondary" class="caption">
                 <span>{{ item.name }}</span>
               </v-chip>
             </template>
@@ -29,10 +28,9 @@
             item-value="value"
             item-text="name"
             :items="decisionFilter"
-            label="DecisionMade Filter"
           >
             <template v-slot:selection="{ item, index }">
-              <v-chip dark color="secondary">
+              <v-chip dark color="secondary" class="caption">
                 <span>{{ item.name }}</span>
               </v-chip>
             </template>
@@ -42,53 +40,56 @@
             item-value="value"
             item-text="name"
             :items="statusFilter"
-            label="Status Filter"
           >
             <template v-slot:selection="{ item, index }">
-              <v-chip dark color="secondary">
+              <v-chip dark color="secondary" class="caption">
                 <span>{{ item.name }}</span>
               </v-chip>
             </template>
           </v-select>
 
-          <v-btn color="secondary" fab small @click.prevent="removeFilters">
+          <v-btn color="transparent" icon small @click.prevent="removeFilters">
             <v-icon>close</v-icon>
+          </v-btn>
+          <v-btn hidden-sm-and-up color="transparent" icon small @click.prevent="onToggleFilter">
+            <v-icon>keyboard_arrow_right</v-icon>
           </v-btn>
         </v-toolbar>
       </template>
       <template v-slot:item="props">
-        <v-expansion-panel-content :class="`${getStatusText(props.item.BelieverStatus)}`">
-          <div slot="header">
-            <v-layout row wrap>
-              <v-flex xs3 md3>
-                <div class="caption grey--text">Name</div>
-                <div>{{ props.item.FullName }}</div>
+        <v-expansion-panel-content :class="`${believerStatus[props.item.BelieverStatus].text}`">
+          <v-container class="pa-0" slot="header">
+            <v-layout justify-space-between row>
+              <v-flex xs4 md4 align-self-center>
+                <div v-if="!isMobile" class="caption grey--text">Name</div>
+                <div
+                  :class="{'title' : isMobile} "
+                >{{ props.item.FirstName }}&nbsp;{{ props.item.LastName }}</div>
               </v-flex>
-              <v-flex xs1 md1>
-                <div class="caption grey--text">.</div>
-
+              <v-flex xs1 md1 align-self-center hidden-xs-only>
                 <div>{{props.item.Gender}}</div>
               </v-flex>
-              <v-flex xs4 sm4 md3>
+              <v-flex xs4 md3 hidden-xs-only>
                 <div class="caption grey--text">Number</div>
                 <div>{{ props.item.MobileNumber }}</div>
               </v-flex>
-              <v-flex xs2 sm2 md2>
+              <v-flex xs4 md2 align-self-center>
                 <v-edit-dialog
+                  v-if="$store.state.Role=='church-admin'"
                   :return-value.sync="props.item.BelieverStatus"
                   lazy
                   large
                   persistent
                   @save="saveContact(props.item)"
                   @cancel="cancel"
-                  @open="open"
-                  @close="close"
+                  disabled
                 >
                   <v-btn
                     small
-                    :color="getColorByStatus(props.item.BelieverStatus)"
-                    class="white--text caption my-2 pa-0"
-                  >{{getStatusText(props.item.BelieverStatus)}}</v-btn>
+                    :color="believerStatus[props.item.BelieverStatus].color"
+                    class="white--text caption mx-0 my-0 pa-0"
+                    @click.prevent
+                  >{{believerStatus[props.item.BelieverStatus].text}}</v-btn>
 
                   <template v-slot:input>
                     <v-select
@@ -110,42 +111,56 @@
                     ></v-text-field>
                   </template>
                 </v-edit-dialog>
+                <template v-else>
+                  <v-btn
+                    small
+                    :color="believerStatus[props.item.BelieverStatus].color"
+                    class="elevation-0 white--text caption mx-0 my-0 pa-0"
+                    @click.prevent
+                  >{{believerStatus[props.item.BelieverStatus].text}}</v-btn>
+                </template>
               </v-flex>
-              <v-flex xs1 sm2 md1>
-                <ContactHistory :contact="props.item"/>
+              <v-flex hidden-xs-only xs1 sm2 md1>
+                <v-btn
+                  @click="showContactHistory(props.item.BelieverID)"
+                  flat
+                  icon
+                  small
+                  color="secondary"
+                >
+                  <v-icon>history</v-icon>
+                </v-btn>
+                <!-- <ContactHistory :contact="props.item"/> -->
               </v-flex>
             </v-layout>
-          </div>
+          </v-container>
           <v-card flat color="accent lighten-3">
             <v-layout row wrap class="ma-3">
               <v-flex xs12 md4>
-                <div class="caption grey--text">Comments</div>
+                <div class="caption grey--text">Notes</div>
                 <div>{{ props.item.AdditionalComments }}</div>
               </v-flex>
-              <v-flex xs6 sm4 md2>
+              <v-flex xs8 sm4 md2>
                 <div class="caption grey--text">Decision</div>
-                <div>{{ getDecisionText(props.item.DecisionMade) }}</div>
+                <div>{{ decisionText[props.item.DecisionMade] }}</div>
               </v-flex>
-              <v-flex xs6 sm4 md2>
+              <v-flex xs4 sm4 md2>
                 <div class="caption grey--text">Language</div>
                 <div>{{ props.item.LanguageType }}</div>
               </v-flex>
-              <v-flex xs6 sm4 md2>
+              <v-flex xs4 sm4 md2>
                 <div class="caption grey--text">Age Group</div>
-                <div>{{ getAgeGroupText(props.item.AgeGroup) }}</div>
+                <div>{{ ageGroups[props.item.AgeGroup] }}</div>
               </v-flex>
-              <v-flex>
+              <v-flex xs4>
                 <div class="caption grey--text">Friend</div>
-                <div>{{ props.item.Friend }}</div>
+                <div>{{ props.item.NameOfFriend }}</div>
               </v-flex>
-              <v-flex>
-                <div class="caption grey--text">Friend</div>
-                <div>{{ props.item.Friend }}</div>
+              <v-flex xs4>
+                <div class="caption grey--text">Friend's Church</div>
+                <div>{{ props.item.FriendChurchPostcode }}</div>
               </v-flex>
-              <v-flex>
-                <div class="caption grey--text">Friend</div>
-                <div>{{ props.item.Friend }}</div>
-              </v-flex>
+
               <!-- <v-flex xs2 sm4 md2>
             <div>
               <v-chip small :class="`${project.status} white--text caption my-2`">{{project.status}}</v-chip>
@@ -156,30 +171,36 @@
         </v-expansion-panel-content>
       </template>
     </v-data-iterator>
-    <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-      {{ snackText }}
-      <v-btn flat @click="snack = false">Close</v-btn>
-    </v-snackbar>
-  </div>
+  </v-flex>
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from "vuex";
-import ContactHistory from "@/components/ContactHistory";
+import { mapState, mapMutations, mapActions } from "vuex";
 
 export default {
-  props: ["contacts"],
-  components: {
-    ContactHistory
-  },
+  props: ["churchid"],
   computed: {
-    ...mapState("ui", ["loading"]),
-    ...mapGetters(["UserName", "Church"]),
+    ...mapState([
+      "loading",
+      "Church",
+      "FullName",
+      "ageGroups",
+      "ageGroupsMap",
+      "believerStatus",
+      "decisionText",
+      "isMobile"
+    ]),
     thePostcode: function() {
-      return this.Church.Postcode === "" ? "000000" : this.Church.Postcode;
+      return this.churchid === "" ? "000000" : this.churchid;
     }
   },
   watch: {
+    $route(to) {
+      this.searchTerm = to.query;
+      this.languageFilterValue = this.searchTerm.language || null;
+      this.statusFilterValue = this.searchTerm.status || null;
+      this.decisionFilterValue = this.searchTerm.decision || null;
+    },
     languageFilterValue: function() {
       this.searchTerm = {
         language: this.languageFilterValue,
@@ -202,8 +223,72 @@ export default {
       };
     }
   },
+  created() {
+    const data = this.churchid;
+    console.log(this.churchid);
+    this.fetchContacts(data)
+      .then(res => {
+        this.contacts = res;
+        this.setLoading(false);
+      })
+      .catch(error => {
+        console.log("There was an error fetching Contacts:", error.response);
+      });
+  },
+  data() {
+    return {
+      contacts: [],
+      filterDrawer: false,
+      isMobile: false,
+      options: [
+        { name: "pending", value: "1" },
+        { name: "contacted", value: "2" },
+        { name: "missing", value: "3" },
+        { name: "reassign", value: "4" }
+      ],
+      languageFilter: [
+        { name: "English", value: "English" },
+        { name: "Mandarin", value: "Mandarin" },
+        { name: "Tamil", value: "Tamil" },
+        { name: "Indonesian", value: "Indonesian" },
+        { name: "Hindi", value: "Hindi" },
+        { name: "Tagalog", value: "Tagalog" },
+        { name: "Children", value: "Children" },
+        { name: "None", value: null }
+      ],
+      statusFilter: [
+        { name: "pending", value: "1" },
+        { name: "contacted", value: "2" },
+        { name: "missing", value: "3" },
+        { name: "reassign", value: "4" },
+        { name: "None", value: null }
+      ],
+      decisionFilter: [
+        { name: "PRC", value: "A" },
+        { name: "Rededicated", value: "B" },
+        { name: "Interested", value: "C" },
+        { name: "Like to join a church", value: "D" },
+        { name: "Others", value: "E" },
+        { name: "None", value: null }
+      ],
+      statusFilterValue: null,
+      languageFilterValue: null,
+      decisionFilterValue: null,
+      max25chars: v => v.length <= 35 || "Input too long!",
+      searchTerm: null,
+      pagination: {
+        rowsPerPage: 10
+      },
+      logMessage: "",
+      iconIndex: 0
+    };
+  },
   methods: {
-    ...mapActions(["updateContact"]),
+    ...mapActions(["updateContact", "fetchContacts"]),
+    ...mapMutations(["toggleDrawerRight", "setMobile"]),
+    onToggleFilter() {
+      this.toggleDrawerRight();
+    },
     removeFilters() {
       this.searchTerm = this.languageFilterValue = this.statusFilterValue = this.decisionFilterValue = null;
     },
@@ -228,132 +313,32 @@ export default {
       return filteredItems;
     },
 
-    getColorByStatus(status) {
-      return this.colors[status];
-    },
-    getStatusText(status) {
-      return this.believerStatusText[status];
-    },
-    getDecisionText(status) {
-      return this.decisionText[status];
-    },
-    getAgeGroupText(code) {
-      return this.ageGroupText[code];
-    },
-
     saveContact(contact) {
       const payload = {
-        RandomID: contact.RandomID,
+        BelieverID: contact.BelieverID,
         BelieverStatus: contact.BelieverStatus,
         ChangeLog: this.logMessage,
-        Postcode: this.thePostcode
+        ChurchID: this.thePostcode
       };
       this.updateContact(payload);
-      this.snack = true;
-      this.snackColor = "success";
-      this.snackText = "Data saved";
-      this.logMessage = "";
     },
     cancel() {
-      this.snack = true;
-      this.snackColor = "error";
-      this.snackText = "Canceled";
-      this.logMessage = "";
+      //
     },
-    open() {
-      this.snack = true;
-      this.snackColor = "info";
-      this.snackText = "Dialog opened";
-    },
+    open() {},
     close() {
       console.log("Dialog closed");
+    },
+    showContactHistory(id) {
+      console.log(id);
+      this.$router.push({
+        path: "/dashboard/contacts/history/" + id
+      });
+    },
+    onResize() {
+      if (window.innerWidth < 769) this.setMobile(true);
+      else this.setMobile(false);
     }
-  },
-  data() {
-    return {
-      languageFilter: [
-        { name: "English", value: "English" },
-        { name: "Mandarin", value: "Mandarin" },
-        { name: "Mandarin", value: "Mandarin" },
-        { name: "Mandarin", value: "Mandarin" },
-        { name: "Tagalog", value: "Tagalog" },
-        { name: "Children", value: "Children" },
-        { name: "None", value: null }
-      ],
-      statusFilter: [
-        { name: "pending", value: "1" },
-        { name: "contacted", value: "2" },
-        { name: "closed", value: "3" },
-        { name: "reassign", value: "4" },
-        { name: "None", value: null }
-      ],
-      decisionFilter: [
-        { name: "PRC", value: "A" },
-        { name: "Rededicated", value: "B" },
-        { name: "Interested", value: "C" },
-        { name: "Like to join a church", value: "D" },
-        { name: "Others", value: "E" },
-        { name: "None", value: null }
-      ],
-      statusFilterValue: null,
-      languageFilterValue: null,
-      decisionFilterValue: null,
-      snack: false,
-      snackColor: "",
-      snackText: "",
-      max25chars: v => v.length <= 35 || "Input too long!",
-      searchTerm: null,
-      pagination: {
-        rowsPerPage: 10
-      },
-      logMessage: "",
-      options: [
-        { name: "pending", value: "1" },
-        { name: "contacted", value: "2" },
-        { name: "missing", value: "3" },
-        { name: "reassign", value: "4" }
-      ],
-      iconIndex: 0,
-      icons: [
-        "sentiment_very_satisfied",
-        "sentiment_satisfied",
-        "sentiment_dissatisfied",
-        "sentiment_very_dissatisfied"
-      ],
-      believerStatusText: {
-        "1": "pending",
-        "2": "contacted",
-        "3": "missing",
-        "4": "reassign"
-      },
-      decisionText: {
-        A: "PRC",
-        B: "Rededicated",
-        C: "Interested",
-        D: "Like to join church"
-      },
-      statusIcons: {
-        pending: "sentiment_very_satisfied",
-        contacted: "sentiment_satisfied",
-        uncontactable: "sentiment_dissatisfied",
-        reassign: "sentiment_very_dissatisfied"
-      },
-      colors: {
-        "1": "warning lighten-1",
-        "2": "success darken-2",
-        "3": "grey darken-1",
-        "4": "primary lighten-2"
-      },
-      ageGroupText: {
-        A: "6 yo and below",
-        B: "7-12 yo",
-        C: "13-16 yo",
-        D: "17-25 yo",
-        E: "26-35 yo",
-        F: "36-49 yo",
-        G: "50 yo and above"
-      }
-    };
   }
 };
 </script>
@@ -372,11 +357,14 @@ export default {
   &.pending {
     border-left: 6px solid var(--v-warning-lighten2);
   }
+  &.missing {
+    border-left: 6px solid var(--v-grey-darken1);
+  }
   &.uncontactable {
     border-left: 6px solid var(--v-grey-darken1);
   }
   &.contacted {
-    border-left: 6px solid var(--v-success-darken2);
+    border-left: 6px solid var(--v-success-darken1);
   }
   &.reassign {
     border-left: 6px solid var(--v-primary-lighten1);

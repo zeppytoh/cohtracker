@@ -1,72 +1,74 @@
 <template>
-  <nav>
-    <v-toolbar fixed dark clipped-right app class="coh-toolbar">
-      <v-btn color="primary" small flat router :to="{name : 'home'}">
-        <v-img :src="require('../assets/COH_Eng_White-300.png')" contain height="64"></v-img>
-      </v-btn>
+  <v-toolbar dark clipped-left clipped-right fixed app class="coh-toolbar">
+    <v-toolbar-items v-if="isAuthenticated">
+      <v-toolbar-side-icon @click="onClickBtn"></v-toolbar-side-icon>
+    </v-toolbar-items>
+    <v-btn class="pt-3" color="primary" small flat router :to="{name : 'home'}">
+      <v-img :src="computeLogo" contain height="72"></v-img>
+    </v-btn>
 
-      <v-spacer></v-spacer>
-      <v-toolbar-items>
-        <v-toolbar-side-icon @click.prevent.stop="drawer = !drawer"></v-toolbar-side-icon>
-      </v-toolbar-items>
-
-      <!-- <v-spacer></v-spacer>
-      <v-btn flat>
-        <span>Welcome, admin
-          <v-icon right>exit_to_app</v-icon>
-        </span>
-      </v-btn>-->
-    </v-toolbar>
-    <v-navigation-drawer app dark clipped right v-model="drawer" class="secondary darken-1">
-      <v-layout column align-center>
-        <v-flex class="mt-5">
-          <!-- <Popup/> -->
-        </v-flex>
-      </v-layout>
-      <v-divider></v-divider>
-      <v-list>
-        <v-list-tile v-for="link in links" :key="link.text" router :to="{name: link.routename}">
-          <v-list-tile-action>
-            <v-icon class="white--text">{{ link.icon }}</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title class="white--text">{{ link.text }}</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
-    </v-navigation-drawer>
-    
-  </nav>
+    <v-spacer></v-spacer>
+    <v-btn v-if="isAuthenticated" @click="onLogout" flat>
+      <span>
+        Welcome, {{ FullName }}
+        <v-icon right>exit_to_app</v-icon>
+      </span>
+    </v-btn>
+  </v-toolbar>
 </template>
 
 <script>
-// import Popup from "@/components/Popup";
-
+import { mapMutations, mapActions, mapGetters } from "vuex";
 export default {
   data() {
     return {
-      drawer: false,
-      links: [
-        {
-          icon: "person",
-          text: "Contacts",
-          routename: "churchadmin"
-        },
-        {
-          icon: "info",
-          text: "About",
-          routename: "about"
-        }
-      ]
+      responsive: false,
+      responsiveInput: false
     };
   },
-  components: {
-    // Popup
+  computed: {
+    ...mapGetters(["isAuthenticated", "FullName"]),
+    computeLogo() {
+      return "/static/COH_Eng_White-300.png";
+    }
+  },
+
+  mounted() {
+    this.onResponsiveInverted();
+    window.addEventListener("resize", this.onResponsiveInverted);
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.onResponsiveInverted);
+  },
+
+  methods: {
+    ...mapActions(["logout"]),
+    ...mapMutations(["setDrawer", "toggleDrawer"]),
+    onClickBtn() {
+      this.setDrawer(!this.$store.state.drawer);
+    },
+    onClick() {
+      //
+    },
+    onLogout() {
+      this.logout();
+      this.setDrawer(false);
+      this.$router.replace("/");
+    },
+    onResponsiveInverted() {
+      if (window.innerWidth < 991) {
+        this.responsive = true;
+        this.responsiveInput = false;
+      } else {
+        this.responsive = false;
+        this.responsiveInput = true;
+      }
+    }
   }
 };
 </script>
 
-<style lang="scss">
+<style>
 .home-title {
   text-decoration: none;
 }

@@ -1,41 +1,51 @@
 import Vue from "vue";
-import Router from "vue-router";
+import VueRouter from "vue-router";
 import store from "@/store";
 
-Vue.use(Router);
+import Login from "./views/Login.vue";
 
-export default new Router({
+Vue.use(VueRouter);
+
+export default new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes: [
     {
       path: "/",
       name: "home",
-      component: () =>
-        import(/* webpackChunkName: "routes" */ "./views/Login.vue")
+
+      component: Login
     },
     {
       path: "/dashboard",
-      name: "dashboard",
+      props: true,
+      component: () => import("./views/Dashboard.vue"),
+      children: [
+        {
+          path: "",
+          name: "dashboard",
 
-      component: () =>
-        import(/* webpackChunkName: "routes" */ "./views/Dashboard.vue")
+          components: {
+            default: () => import("./components/Churches")
+          }
+        },
+        {
+          path: "contacts/:churchid?",
+          components: {
+            default: () => import("./components/Contacts")
+          },
+          props: { default: true }
+        },
+        {
+          path: "contacts/history/:id?",
+          props: { default: true },
+          components: {
+            default: () => import("./components/Contact")
+          }
+        }
+      ]
     },
-    {
-      path: "/login",
-      name: "login",
-      component: () =>
-        import(/* webpackChunkName: "routes" */ "./views/Login.vue")
-    },
-    {
-      path: "/about",
-      name: "about",
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () =>
-        import(/* webpackChunkName: "routes" */ "./views/About.vue")
-    },
+
     {
       path: "/churchadmin/:postcode?",
       name: "churchadmin",
@@ -48,22 +58,9 @@ export default new Router({
           next({ name: "home" });
         }
       },
-      component: () =>
-        import(/* webpackChunkName: "routes" */ "./views/ChurchAdmin.vue")
-    },
-    {
-      path: "/churches",
-      name: "churches",
-      props: true,
-      beforeEnter: (to, from, next) => {
-        if (store.state.AccessToken) {
-          next();
-        } else {
-          next({ name: "home" });
-        }
-      },
-      component: () =>
-        import(/* webpackChunkName: "routes" */ "./views/Churches.vue")
+      component: () => {
+        import(/* webpackChunkName: "routes" */ "./views/ChurchAdmin.vue");
+      }
     }
   ]
 });

@@ -1,42 +1,130 @@
 <template>
-  <v-container>
-    <v-layout row wrap>
-      <v-flex class="pa-0">
-        <v-expansion-panel class="elevation-0">
-          <v-expansion-panel-content v-for="(church,i) in churches" :key="i">
-            <v-layout slot="header" row wrap>
-              <v-flex xs6>
-                <div class="caption grey--text">Church name</div>
-                <div>{{ church.Name }}</div>
+  <v-container fluid grid-list-md>
+    <v-data-iterator
+      row
+      wrap
+      :items="churches"
+      :rows-per-page-items="rowsPerPageItems"
+      pagination.sync="pagination"
+      content-tag="v-layout"
+      :expand="expand"
+      :search="search"
+    >
+      <template v-slot:header>
+        <v-toolbar color="transparent" prominent flat>
+          <v-layout row wrap>
+            <v-flex xs8>
+              <v-combobox
+                v-model="search"
+                browser-autocomplete
+                chips
+                label="Type language or church name"
+              ></v-combobox>
+            </v-flex>
+          </v-layout>
+        </v-toolbar>
+      </template>
+      <template v-slot:item="props">
+        <v-flex xs12 sm6 lg4>
+          <v-card class="pa-1 ma-0" dark color="secondary darken-1">
+            <v-card-title primary-title>
+              <v-flex xs8>
+                <span
+                  v-if="(props.item.Name.length > 45 && props.item.ChurchAbbreviation.length > 0)"
+                >{{ props.item.ChurchAbbreviation }}</span>
+                <span v-else>{{ props.item.Name }}</span>
               </v-flex>
-              <v-flex xs6>
-                <v-btn color="secondary" @click="viewContactList(church)">View</v-btn>
+              <v-flex xs2>
+                <v-btn
+                  light
+                  color="secondary lighten-2"
+                  class="caption"
+                  @click.stop="onViewChurch(props.item)"
+                >View Contacts</v-btn>
               </v-flex>
-            </v-layout>
-            <v-card>
-              <v-card-text>{{ church.Address }}</v-card-text>
-            </v-card>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-flex>
-    </v-layout>
+            </v-card-title>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn small icon @click="props.expanded = !props.expanded">
+                <v-icon>{{ props.expanded ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
+              </v-btn>
+            </v-card-actions>
+            <v-slide-y-transition>
+              <v-card
+                class="ma-2 elevation-0"
+                dark
+                color="secondary darken-1"
+                v-if="props.expanded == true"
+              >
+                <v-card-text>
+                  <span class>Congregations</span>
+
+                  <ul>
+                    <li
+                      class="caption grey--text"
+                      v-for="i in props.item.CongregationArray"
+                      :key="i"
+                    >{{ i }}</li>
+                  </ul>
+                </v-card-text>
+              </v-card>
+            </v-slide-y-transition>
+          </v-card>
+        </v-flex>
+      </template>
+    </v-data-iterator>
   </v-container>
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapState } from "vuex";
 import router from "@/router";
 
 export default {
-  name: "Churches",
+  name: "ChurchesList",
   computed: {
-    ...mapGetters(["AccessToken"])
+    ...mapState(["AccessToken"])
   },
   data() {
     return {
+      search: "",
+      expand: false,
+      rowsPerPageItems: [6, 18, 54],
+
+      pagination: {
+        rowsPerPage: 6
+      },
       churches: [],
-      errors: []
+      panels: [],
+      languageFilter: [
+        { name: "English", value: "English" },
+        { name: "Mandarin", value: "Mandarin" },
+        { name: "Tagalog", value: "Tagalog" },
+        { name: "Children", value: "Children" },
+        { name: "None", value: null }
+      ],
+      languageFilterValue: null,
+      searchTerm: null
     };
+  },
+  watch: {
+    panels: function(val) {
+      if (val) {
+        console.log(val);
+        this.fetchContacts(this.churches[val].ChurchID)
+          .then(res => {
+            console.log("Panels" + res);
+            const contacts = res;
+            for (let key in res) {
+              const contact = res[key];
+              contact.id = key;
+              contacts.push(contact);
+            }
+            contacts.length;
+          })
+          .catch(error => console.log(error));
+      }
+    }
   },
   created() {
     this.fetchChurches()
@@ -49,12 +137,15 @@ export default {
       });
   },
   methods: {
-    ...mapActions(["fetchChurches", "setChurch"]),
-    viewContactList(church) {
+    ...mapActions(["fetchChurches", "setChurch", "fetchContacts"]),
+    filterLanguage(item, search) {
+      return item.toLowerCase().includes(search);
+    },
+    onViewChurch(church) {
       this.setChurch(church);
+      console.log(church.ChurchID);
       router.push({
-        name: "churchadmin",
-        params: { postcode: church.Postcode }
+        path: "dashboard/contacts/" + church.ChurchID
       });
     }
   }

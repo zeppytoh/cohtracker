@@ -1,5 +1,5 @@
 <template>
-  <div id="login" class="secondary">
+  <div id="login">
     <v-container fluid fill-height>
       <v-layout justify-center>
         <v-flex xs12 sm8 md4 lg4>
@@ -40,27 +40,30 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 export default {
   data: () => ({
-    loading: false,
-    username: "dillon@cru.org.sg",
+    username: "pohlian@bbtc.com.sg",
     password: "469717"
   }),
-
+  computed: {
+    ...mapState(["loading"])
+  },
   methods: {
     ...mapActions(["authUser"]),
     login() {
-      this.loading = true;
       this.authUser({
         username: this.username,
         password: this.password
+      }).then(res => {
+        console.log(res);
+        this.$router.replace("dashboard");
       });
     }
   }
 };
 </script>
-<style scoped lang="css">
+<style scoped lang="scss">
 #login {
   height: 50%;
   width: 100%;
