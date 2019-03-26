@@ -28,19 +28,19 @@
         <v-flex xs12 sm6 lg4>
           <v-card class="pa-1 ma-0" dark color="secondary darken-1">
             <v-card-title primary-title>
-              <v-flex xs8>
+              <v-flex xs7>
                 <span
                   v-if="(props.item.Name.length > 45 && props.item.ChurchAbbreviation.length > 0)"
                 >{{ props.item.ChurchAbbreviation }}</span>
                 <span v-else>{{ props.item.Name }}</span>
               </v-flex>
-              <v-flex xs2>
+              <v-flex xs5>
                 <v-btn
                   light
                   color="secondary lighten-2"
                   class="caption"
                   @click.stop="onViewChurch(props.item)"
-                >View Contacts</v-btn>
+                >View</v-btn>
               </v-flex>
             </v-card-title>
             <v-card-actions>
