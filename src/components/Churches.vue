@@ -13,7 +13,7 @@
       <template v-slot:header>
         <v-toolbar color="transparent" prominent flat>
           <v-layout row wrap>
-            <v-flex xs8>
+            <v-flex xs12>
               <v-combobox
                 v-model="search"
                 browser-autocomplete
