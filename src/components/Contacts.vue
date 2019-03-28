@@ -5,7 +5,7 @@
       <v-data-iterator
         row
         wrap
-        :items="contacts"
+        :items="Contacts"
         item-key="BelieverID"
         :rows-per-page-items="rowsPerPageItems"
         pagination.sync="pagination"
@@ -53,13 +53,20 @@
                 </v-chip>
               </template>
             </v-select>
-
-            <v-btn color="transparent" icon small @click.prevent="removeFilters">
-              <v-icon color="secondary">layers_clear</v-icon>
-            </v-btn>
-            <v-btn hidden-sm-and-up color="transparent" icon small @click.prevent="onToggleFilter">
-              <v-icon color="secondary">filter_list</v-icon>
-            </v-btn>
+            <v-toolbar-items>
+              <v-btn color="transparent" icon small @click.prevent="removeFilters">
+                <v-icon color="secondary">layers_clear</v-icon>
+              </v-btn>
+              <v-btn
+                hidden-sm-and-up
+                color="transparent"
+                icon
+                small
+                @click.prevent="onToggleFilter"
+              >
+                <v-icon color="secondary">filter_list</v-icon>
+              </v-btn>
+            </v-toolbar-items>
           </v-toolbar>
         </template>
         <template v-slot:item="props">
@@ -104,7 +111,7 @@
                         ></v-select>
                         <v-text-field
                           v-model="logMessage"
-                          label="Please share why you're making the change"
+                          label="Give details for this status change"
                           :rules="['Required']"
                           required
                           autofocus
@@ -149,15 +156,19 @@
                       <div class="caption grey--text">Notes</div>
                       <div>{{ props.item.AdditionalComments }}</div>
                     </v-flex>
-                    <v-flex xs8>
+                    <v-flex xs7>
                       <div class="caption grey--text">Decision</div>
                       <div>{{ decisionText[props.item.DecisionMade] }}</div>
                     </v-flex>
-                    <v-flex xs4>
+                    <v-flex xs5>
                       <div class="caption grey--text">Language</div>
                       <div>{{ props.item.LanguageType }}</div>
                     </v-flex>
-                    <v-flex xs12>
+                    <v-flex xs7>
+                      <div class="caption grey--text">Email</div>
+                      <div>{{ props.item.EmailAddress }}</div>
+                    </v-flex>
+                    <v-flex xs5>
                       <div class="caption grey--text">Age Group</div>
                       <div>{{ ageGroups[props.item.AgeGroup] }}</div>
                     </v-flex>
@@ -165,13 +176,13 @@
                       <div class="caption grey--text">Rally Attended</div>
                       <div>{{ rallyTime[props.item.RallyTime] }}</div>
                     </v-flex>
-                    <v-flex xs8>
+                    <v-flex xs7>
                       <div class="caption grey--text">Friend</div>
                       <div>{{ props.item.NameOfFriend }}</div>
                     </v-flex>
-                    <v-flex xs4>
-                      <div class="caption grey--text">Friend's Church</div>
-                      <div>{{ props.item.FriendChurchPostcode }}</div>
+                    <v-flex xs5>
+                      <div class="caption grey--text">Friend's Contact</div>
+                      <div>{{ props.item.FriendContactNumber }}</div>
                     </v-flex>
 
                     <!-- <v-flex xs2 sm4 md2>
@@ -188,21 +199,15 @@
       </v-data-iterator>
       <v-layout row wrap align-content-start>
         <v-flex xs12>
-          <v-btn
-            color="secondary"
-            class="elevation-1 caption"
-            @click.stop="onToggleFilter"
-          >Toggle Filters</v-btn>
-          <v-btn
-            color="secondary"
-            class="elevation-1 caption"
-            @click.stop="removeFilters"
-          >Clear Filters</v-btn>
-          <v-btn
-            color="primary"
-            class="elevation-1 caption"
-            @click.stop="onExport"
-          >Export to Excel spreadsheet</v-btn>
+          <v-btn color="secondary" class="elevation-1 caption" @click.stop="onToggleFilter">
+            <v-icon class="left" color="secondary lighten-3">filter_list</v-icon>&nbsp;Toggle Filters
+          </v-btn>
+          <v-btn color="secondary" class="elevation-1 caption" @click.stop="removeFilters">
+            <v-icon class="left" color="secondary lighten-3">layers_clear</v-icon>&nbsp;Clear Filters
+          </v-btn>
+          <v-btn color="secondary lighten-1" class="elevation-1 caption" @click.stop="onExport">
+            <v-icon class="left" color="secondary lighten-4">cloud_download</v-icon>&nbsp;Export to Excel spreadsheet
+          </v-btn>
         </v-flex>
       </v-layout>
     </v-container>
@@ -222,17 +227,14 @@ export default {
     ...mapState([
       "loading",
       "Church",
+      "Contacts",
       "FullName",
       "ageGroups",
       "rallyTime",
-      "ageGroupsMap",
       "believerStatus",
       "decisionText",
       "drawerRight"
-    ]),
-    thePostcode: function() {
-      return this.churchid === "" ? "000000" : this.churchid;
-    }
+    ])
   },
   watch: {
     $route(to) {
@@ -264,20 +266,28 @@ export default {
     }
   },
   created() {
-    const data = this.churchid;
-    console.log(this.churchid);
-    this.fetchContacts(data)
-      .then(res => {
-        this.contacts = res;
-        this.setLoading(false);
-      })
-      .catch(error => {
-        console.log("There was an error fetching Contacts:", error.response);
-      });
+    // const data = this.churchid;
+    // if (!data) {
+    //   this.$router.push({
+    //     path: "/dashboard/"
+    //   });
+    // }
+    // this.fetchContacts(data)
+    //   .then(res => {
+    //     console.log("Contacts fetched!");
+    //     console.log(res);
+    //     this.contacts = res.data;
+    //     this.setLoading(false);
+    //   })
+    //   .catch(error => {
+    //     console.log(
+    //       "There was an error fetching in Contacts component:",
+    //       error.response
+    //     );
+    //   });
   },
   data() {
     return {
-      contacts: [],
       expand: false,
       filterDrawer: false,
       options: [
@@ -316,6 +326,8 @@ export default {
       decisionFilterValue: null,
       max25chars: v => v.length <= 35 || "Input too long!",
       searchTerm: null,
+      rowsPerPageItems: [6, 18, 54],
+
       pagination: {
         rowsPerPage: 10
       },
@@ -330,11 +342,16 @@ export default {
       this.toggleDrawerRight();
     },
     onExport() {
-      let contactsWS = XLSX.utils.json_to_sheet(this.contacts);
+      let contactsWS = XLSX.utils.json_to_sheet(this.Contacts);
       let wb = XLSX.utils.book_new(); // make Workbook of Excel
       XLSX.utils.book_append_sheet(wb, contactsWS, "contacts");
       // add Worksheet to Workbook
-      let filename = this.Church.Name + ".xlsx";
+      var filename;
+      if (this.Church.Name != "") {
+        filename = this.Church.Name + ".xlsx";
+      } else {
+        filename = "SuperAdmin.xlsx";
+      }
       XLSX.writeFile(wb, filename); // name of the file is 'book.xlsx'
     },
     removeFilters() {
@@ -372,9 +389,10 @@ export default {
           BelieverID: contact.BelieverID,
           BelieverStatus: contact.BelieverStatus,
           ChangeLog: this.logMessage,
-          ChurchID: this.thePostcode
+          ChurchID: this.Church.ChurchID
         };
         this.updateContact(payload);
+        this.setSnack("Status updated");
         this.logMessage = "";
       }
     },
@@ -411,10 +429,7 @@ export default {
     border-left: 6px solid var(--v-warning-lighten2);
   }
   &.missing {
-    border-left: 6px solid var(--v-grey-darken1);
-  }
-  &.uncontactable {
-    border-left: 6px solid var(--v-grey-darken1);
+    border-left: 6px solid grey;
   }
   &.contacted {
     border-left: 6px solid var(--v-success-darken1);

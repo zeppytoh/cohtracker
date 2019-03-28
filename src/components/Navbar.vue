@@ -1,24 +1,43 @@
 <template>
   <v-toolbar dark clipped-left clipped-right fixed app class="coh-toolbar">
-    <v-toolbar-items v-if="isAuthenticated">
-      <v-toolbar-side-icon @click="onClickBtn"></v-toolbar-side-icon>
-    </v-toolbar-items>
-    <v-btn class="pt-3" color="primary" small flat router :to="{name : 'home'}">
-      <v-img :src="computeLogo" contain height="72"></v-img>
-    </v-btn>
+    <v-toolbar-side-icon v-if="isAuthenticated" @click="onClickBtn"></v-toolbar-side-icon>
+    <!-- <v-toolbar-items v-if="isAuthenticated"><v-btn
+        @click="onClickBtn"
+        class="pt-3"
+        color="primary"
+        small
+        flat
+        router
+        :to="{name : 'dashboard'}"
+      >
+        <v-img :src="computeLogo" contain height="72"></v-img>
+    </v-btn></v-toolbar-items>-->
 
+    <v-toolbar-title class="body-2">{{ toolbarTitle }}</v-toolbar-title>
     <v-spacer></v-spacer>
-    <v-btn v-if="isAuthenticated" @click="onLogout" flat>
-      <span>
-        Welcome, {{ FullName }}
-        <v-icon right>exit_to_app</v-icon>
-      </span>
-    </v-btn>
+    <v-menu transition="slide-y-transition" dark v-if="isAuthenticated" offset-y>
+      <template v-slot:activator="{ on }">
+        <span class="hidden-xs-only caption">{{ FullName }}</span>
+
+        <v-btn icon flat v-on="on">
+          <v-icon>more_vert</v-icon>
+        </v-btn>
+      </template>
+      <v-list>
+        <v-list-tile router to="/changepassword">
+          <v-list-tile-title class="caption">Change Password</v-list-tile-title>
+        </v-list-tile>
+        <v-list-tile @click="onLogout()">
+          <v-list-tile-title class="caption">Logout</v-list-tile-title>
+        </v-list-tile>
+      </v-list>
+    </v-menu>
   </v-toolbar>
 </template>
 
 <script>
-import { mapMutations, mapActions, mapGetters } from "vuex";
+import { mapMutations, mapActions, mapGetters, mapState } from "vuex";
+
 export default {
   data() {
     return {
@@ -28,8 +47,16 @@ export default {
   },
   computed: {
     ...mapGetters(["isAuthenticated", "FullName"]),
+    ...mapState(["Church"]),
     computeLogo() {
-      return "/static/COH_Eng_White-300.png";
+      return "static/COH_Eng_White-300.png";
+    },
+    toolbarTitle() {
+      if (this.$route.path.endsWith("/dashboard/")) {
+        return "Church Directory";
+      } else if (this.Church) {
+        return this.Church.Name;
+      } else return "";
     }
   },
 
@@ -54,6 +81,11 @@ export default {
       this.logout();
       this.setDrawer(false);
       this.$router.replace("/");
+    },
+    onChangePassword() {
+      this.setDrawer(false);
+
+      this.$router.push("/changepassword");
     },
     onResponsiveInverted() {
       if (window.innerWidth < 991) {

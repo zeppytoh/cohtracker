@@ -35,12 +35,17 @@ export default {
         {
           icon: "dashboard",
           text: "Dashboard",
-          routename: "/dashboard"
+          routename: "/dashboard/"
         },
         {
           icon: "person",
           text: "Contacts",
-          routename: "/dashboard/contacts"
+          routename: "/dashboard/contacts/"
+        },
+        {
+          icon: "more",
+          text: "Password",
+          routename: "/changepassword"
         }
       ]
     };

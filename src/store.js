@@ -141,20 +141,25 @@ export default new Vuex.Store({
         console.log("AutoLogin failed");
         return false;
       } else {
-        console.log("tryAutoLogin valid token found");
         const expireDate = localStorage.getItem("expireDate");
         const now = new Date();
         if (now >= expireDate) {
-          return;
+          console.log("AutoLogin session has expired");
+          localStorage.clear();
+
+          return false;
+        } else {
+          const data = {
+            token: token,
+            role: localStorage.getItem("role"),
+            name: localStorage.getItem("name"),
+            church: JSON.parse(localStorage.getItem("church"))
+          };
+          console.log("tryAutoLogin valid token found");
+
+          commit("authUser", data);
+          return true;
         }
-        const data = {
-          token: token,
-          role: localStorage.getItem("role"),
-          name: localStorage.getItem("name"),
-          church: JSON.parse(localStorage.getItem("church"))
-        };
-        commit("authUser", data);
-        return true;
       }
     },
     setChurch({ commit }, payload) {
@@ -162,6 +167,8 @@ export default new Vuex.Store({
     },
     logout({ commit }) {
       commit("clearAuthData");
+      localStorage.clear();
+
       commit("setSnack", "Logging out");
     },
     updateContact({ commit, state }, payload) {
@@ -217,20 +224,21 @@ export default new Vuex.Store({
         return cohservice
           .fetchContacts(data)
           .then(res => {
-            console.log("In Fetch Contacts", res.data);
-            const contacts = res.data;
-            // for (let key in data) {
-            //   const contact = data[key];
-            //   contact.id = key;
-            //   contacts.push(contact);
-            // }
+            console.log("In Fetch Contacts service", res.data);
+            const data = res.data;
+            const contacts = [];
+            for (let key in data) {
+              const contact = data[key];
+              contact.id = key;
+              contacts.push(contact);
+            }
             commit("setContacts", contacts);
-            return contacts;
+            return res;
           })
           .catch(error => console.log(error));
       }
     },
-    fetchChurches({ commit, state }) {
+    fetchChurches({ state, commit }) {
       if (state.AccessToken) {
         return cohservice
           .fetchChurches({ AccessToken: state.AccessToken })

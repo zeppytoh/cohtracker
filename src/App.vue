@@ -4,6 +4,7 @@
     <Drawer/>
     <ContentView/>
     <Snackbar/>
+    <Loading/>
   </v-app>
 </template>
 
@@ -12,6 +13,7 @@ import Navbar from "./components/Navbar";
 import Drawer from "./components/Drawer";
 import ContentView from "./components/ContentView";
 import Snackbar from "./components/Snackbar";
+import Loading from "./components/Loading";
 
 export default {
   name: "App",
@@ -19,7 +21,8 @@ export default {
     Navbar,
     Drawer,
     ContentView,
-    Snackbar
+    Snackbar,
+    Loading
   },
   data() {
     return {
@@ -27,8 +30,9 @@ export default {
     };
   },
   created() {
-    if (this.$store.dispatch("tryAutoLogin") === true) {
-      this.$router.replace("dashboard");
+    if (this.$store.dispatch("tryAutoLogin")) {
+      console.log("AugoLogin returned true");
+      this.$router.replace("/dashboard/");
     } else {
       this.$router.replace("/");
     }

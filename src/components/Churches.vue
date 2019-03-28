@@ -3,7 +3,7 @@
     <v-data-iterator
       row
       wrap
-      :items="churches"
+      :items="Churches"
       :rows-per-page-items="rowsPerPageItems"
       pagination.sync="pagination"
       content-tag="v-layout"
@@ -79,24 +79,23 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
 import router from "@/router";
-
+import { mapState, mapActions } from "vuex";
 export default {
-  name: "ChurchesList",
+  name: "Churches",
+
   computed: {
-    ...mapState(["AccessToken"])
+    ...mapState(["Churches"])
   },
   data() {
     return {
       search: "",
       expand: false,
       rowsPerPageItems: [6, 18, 54],
-
       pagination: {
         rowsPerPage: 6
       },
-      churches: [],
+
       panels: [],
       languageFilter: [
         { name: "English", value: "English" },
@@ -109,37 +108,19 @@ export default {
       searchTerm: null
     };
   },
-  watch: {
-    panels: function(val) {
-      if (val) {
-        console.log(val);
-        this.fetchContacts(this.churches[val].ChurchID)
-          .then(res => {
-            console.log("Panels" + res);
-            const contacts = res;
-            for (let key in res) {
-              const contact = res[key];
-              contact.id = key;
-              contacts.push(contact);
-            }
-            contacts.length;
-          })
-          .catch(error => console.log(error));
-      }
-    }
-  },
+
   created() {
-    this.fetchChurches()
-      .then(res => {
-        this.churches = res;
-        console.log(this.churches);
-      })
-      .catch(error => {
-        console.log("There was an error:", error.response);
-      });
+    // this.fetchChurches()
+    //   .then(res => {
+    //     this.churches = res;
+    //     console.log(this.churches);
+    //   })
+    //   .catch(error => {
+    //     console.log("There was an error:", error.response);
+    //   });
   },
   methods: {
-    ...mapActions(["fetchChurches", "setChurch", "fetchContacts"]),
+    ...mapActions(["setChurch"]),
     filterLanguage(item, search) {
       return item.toLowerCase().includes(search);
     },
@@ -147,7 +128,7 @@ export default {
       this.setChurch(church);
       console.log(church.ChurchID);
       router.push({
-        path: "dashboard/contacts/" + church.ChurchID
+        path: "/dashboard/contacts/" + church.ChurchID
       });
     }
   }
