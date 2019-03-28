@@ -27,9 +27,21 @@ export default {
     };
   },
   created() {
-    if (this.$store.dispatch("tryAutoLogin")) {
+    if (this.$store.dispatch("tryAutoLogin") === true) {
       this.$router.replace("dashboard");
+    } else {
+      this.$router.replace("/");
     }
   }
 };
 </script>
+
+<style lang="scss">
+.contentGradient {
+  background-image: linear-gradient(
+    to bottom,
+    var(--v-accent-base),
+    var(--v-secondary-base)
+  );
+}
+</style>

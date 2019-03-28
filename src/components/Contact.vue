@@ -5,20 +5,25 @@
         <v-flex xs12 sm8 offset-sm2>
           <v-card :class="`${believerStatus[contact.BelieverStatus].text} contact pa-1 ma-0`" light>
             <v-toolbar color="secondary" dark flat>
-              <v-btn icon dark @click="onClose()">
+              <h3
+                class="title font-weight-light text-xs-center grow"
+              >{{ contact.FirstName }}&nbsp;{{ contact.LastName }}</h3>
+              <v-btn icon class="right" dark @click="onClose()">
                 <v-icon>close</v-icon>
               </v-btn>
-              <h3 class="title font-weight-light text-xs-center grow">Contact History</h3>
             </v-toolbar>
 
-            <v-card-title primary-title>
-              <div class="headline">{{ contact.FirstName }}&nbsp;{{ contact.LastName }}</div>
-            </v-card-title>
-            <v-card-text>
-              <span>{{ contact.MobileNumber }}</span>
-            </v-card-text>
             <v-card class="ma-0 elevation-0" light color="grey lighten-2">
               <v-layout row wrap class="pa-3">
+                <v-flex xs4>
+                  <div class="caption grey--text">Mobile Number</div>
+
+                  <span>{{ contact.MobileNumber }}</span>
+                </v-flex>
+                <v-flex xs8>
+                  <div class="caption grey--text">Email Address</div>
+                  <span>{{ contact.EmailAddress }}</span>
+                </v-flex>
                 <v-flex xs12>
                   <div class="caption grey--text">Notes</div>
                   <div>{{ contact.AdditionalComments }}</div>
@@ -34,6 +39,10 @@
                 <v-flex xs12>
                   <div class="caption grey--text">Age Group</div>
                   <div>{{ ageGroups[contact.AgeGroup] }}</div>
+                </v-flex>
+                <v-flex xs12>
+                  <div class="caption grey--text">Rally Attended</div>
+                  <div>{{ rallyTime[contact.RallyTime] }}</div>
                 </v-flex>
                 <v-flex xs8>
                   <div class="caption grey--text">Friend</div>
@@ -110,6 +119,7 @@ export default {
       "Church",
       "FullName",
       "ageGroups",
+      "rallyTime",
       "ageGroupsMap",
       "believerStatus",
       "decisionText"

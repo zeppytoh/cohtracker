@@ -24,6 +24,15 @@ export default new Vuex.Store({
       F: "36-49 yo",
       G: "50 yo and above"
     },
+    rallyTime: {
+      A: "Friday, 17 May 7:30PM (English)",
+      B: "Saturday, 18 May 10:30AM (Children & Families)",
+      C: "Saturday, 18 May 7:30PM (Chinese)",
+      D: "Saturday, 18 May 7:30PM (Tamil)",
+      E: "Sunday, 19 May 10:30AM (Filipino/English)",
+      F: "Sunday, 19 May 2:00PM (Hindi)",
+      G: "Sunday, 19 May 7:30PM (English)"
+    },
     ageGroupsMap: new Map([
       ["A", "6 yo and below"],
       ["B", "7-12 yo"],

@@ -25,7 +25,7 @@ export default {
     snack() {
       const msg = this.snack;
       if (msg !== "") {
-        this.setColor("secondary");
+        this.setColor("primary");
         this.message = msg;
         this.show = true;
       }

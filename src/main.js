@@ -1,4 +1,5 @@
 import Vue from "vue";
+import './plugins/vuetify'
 import "./plugins/axios";
 import "./plugins/vuetify";
 import { sync } from "vuex-router-sync";

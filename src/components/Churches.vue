@@ -26,22 +26,24 @@
       </template>
       <template v-slot:item="props">
         <v-flex xs12 sm6 lg4>
-          <v-card class="pa-1 ma-0" dark color="secondary darken-1">
+          <v-card class="pa-1 ma-0" dark color="secondary">
             <v-card-title primary-title>
-              <v-flex xs7>
-                <span
-                  v-if="(props.item.Name.length > 45 && props.item.ChurchAbbreviation.length > 0)"
-                >{{ props.item.ChurchAbbreviation }}</span>
-                <span v-else>{{ props.item.Name }}</span>
-              </v-flex>
-              <v-flex xs5>
-                <v-btn
-                  light
-                  color="secondary lighten-2"
-                  class="caption"
-                  @click.stop="onViewChurch(props.item)"
-                >View</v-btn>
-              </v-flex>
+              <v-layout row wrap justify-space-between>
+                <v-flex xs8>
+                  <span
+                    v-if="(props.item.Name.length > 45 && props.item.ChurchAbbreviation.length > 0)"
+                  >{{ props.item.ChurchAbbreviation }}</span>
+                  <span v-else>{{ props.item.Name }}</span>
+                </v-flex>
+                <v-flex xs4>
+                  <v-btn
+                    light
+                    color="secondary lighten-2"
+                    class="caption black--text"
+                    @click.stop="onViewChurch(props.item)"
+                  >Contacts</v-btn>
+                </v-flex>
+              </v-layout>
             </v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -151,22 +153,3 @@ export default {
   }
 };
 </script>
-
-<style lang="scss" scoped>
-.v-expansion-panel__container--active {
-  .v-expansion-panel__header {
-    background-color: rgba(0, 0, 0, 0);
-  }
-  .v-expansion-panel__body {
-    .v-card {
-      border-radius: 0.6rem;
-    }
-  }
-}
-.v-expansion-panel__container {
-  border-top-right-radius: 0.6rem;
-  border-bottom-right-radius: 0.6rem;
-  border-left: 6px solid var(--v-secondary-lighten2);
-  margin-bottom: 4px;
-}
-</style>

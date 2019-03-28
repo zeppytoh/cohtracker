@@ -70,11 +70,11 @@
             >
               <v-card-title primary-title>
                 <v-layout row wrap>
-                  <v-flex xs8>
-                    <div>{{ props.item.FirstName }}&nbsp;{{ props.item.LastName }}&nbsp;{{ props.item.FirstName }}</div>
+                  <v-flex grow>
+                    <div>{{ props.item.FirstName }}&nbsp;{{ props.item.LastName }}</div>
                     <span>{{ props.item.MobileNumber }}</span>
                   </v-flex>
-                  <v-flex xs4>
+                  <v-flex shrink>
                     <v-edit-dialog
                       v-if="$store.state.Role=='church-admin'"
                       :return-value.sync="props.item.BelieverStatus"
@@ -83,7 +83,6 @@
                       persistent
                       @save="saveContact(props.item)"
                       @cancel="cancel"
-                      disabled
                       class="right"
                     >
                       <v-btn
@@ -104,7 +103,6 @@
                           v-model="props.item.BelieverStatus"
                         ></v-select>
                         <v-text-field
-                          v-if="props.item.BelieverStatus !== '2'"
                           v-model="logMessage"
                           label="Please share why you're making the change"
                           :rules="['Required']"
@@ -128,11 +126,10 @@
                 <v-btn
                   @click="showContactHistory(props.item.BelieverID)"
                   flat
-                  icon
                   small
                   color="secondary lighten-1"
                 >
-                  <v-icon>history</v-icon>
+                  <v-icon>history</v-icon>History
                 </v-btn>
                 <v-spacer></v-spacer>
 
@@ -164,6 +161,10 @@
                       <div class="caption grey--text">Age Group</div>
                       <div>{{ ageGroups[props.item.AgeGroup] }}</div>
                     </v-flex>
+                    <v-flex xs12>
+                      <div class="caption grey--text">Rally Attended</div>
+                      <div>{{ rallyTime[props.item.RallyTime] }}</div>
+                    </v-flex>
                     <v-flex xs8>
                       <div class="caption grey--text">Friend</div>
                       <div>{{ props.item.NameOfFriend }}</div>
@@ -185,6 +186,25 @@
           </v-flex>
         </template>
       </v-data-iterator>
+      <v-layout row wrap align-content-start>
+        <v-flex xs12>
+          <v-btn
+            color="secondary"
+            class="elevation-1 caption"
+            @click.stop="onToggleFilter"
+          >Toggle Filters</v-btn>
+          <v-btn
+            color="secondary"
+            class="elevation-1 caption"
+            @click.stop="removeFilters"
+          >Clear Filters</v-btn>
+          <v-btn
+            color="primary"
+            class="elevation-1 caption"
+            @click.stop="onExport"
+          >Export to Excel spreadsheet</v-btn>
+        </v-flex>
+      </v-layout>
     </v-container>
   </div>
 </template>
@@ -192,6 +212,7 @@
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
 import FilterDrawer from "@/components/FilterDrawer";
+import XLSX from "xlsx";
 export default {
   components: {
     FilterDrawer
@@ -203,6 +224,7 @@ export default {
       "Church",
       "FullName",
       "ageGroups",
+      "rallyTime",
       "ageGroupsMap",
       "believerStatus",
       "decisionText",
@@ -303,9 +325,17 @@ export default {
   },
   methods: {
     ...mapActions(["updateContact", "fetchContacts"]),
-    ...mapMutations(["toggleDrawerRight", "setMobile"]),
+    ...mapMutations(["toggleDrawerRight", "setMobile", "setSnack"]),
     onToggleFilter() {
       this.toggleDrawerRight();
+    },
+    onExport() {
+      let contactsWS = XLSX.utils.json_to_sheet(this.contacts);
+      let wb = XLSX.utils.book_new(); // make Workbook of Excel
+      XLSX.utils.book_append_sheet(wb, contactsWS, "contacts");
+      // add Worksheet to Workbook
+      let filename = this.Church.Name + ".xlsx";
+      XLSX.writeFile(wb, filename); // name of the file is 'book.xlsx'
     },
     removeFilters() {
       this.searchTerm = this.languageFilterValue = this.statusFilterValue = this.decisionFilterValue = null;
@@ -332,16 +362,24 @@ export default {
     },
 
     saveContact(contact) {
-      const payload = {
-        BelieverID: contact.BelieverID,
-        BelieverStatus: contact.BelieverStatus,
-        ChangeLog: this.logMessage,
-        ChurchID: this.thePostcode
-      };
-      this.updateContact(payload);
+      if (contact.BelieverStatus !== "2" && this.logMessage == "") {
+        this.setSnack(
+          "Status was not changed because no message was logged. Please try again"
+        );
+        this.cancel();
+      } else {
+        const payload = {
+          BelieverID: contact.BelieverID,
+          BelieverStatus: contact.BelieverStatus,
+          ChangeLog: this.logMessage,
+          ChurchID: this.thePostcode
+        };
+        this.updateContact(payload);
+        this.logMessage = "";
+      }
     },
     cancel() {
-      //
+      return;
     },
     open() {},
     close() {

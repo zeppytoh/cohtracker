@@ -15,13 +15,13 @@
         <v-divider></v-divider>
         <v-radio-group class="caption grey--text" label="Status" v-model="statusFilterValue" column>
           <div v-for="item in statusFilter" :key="item.name">
-            <v-radio :label="item.name" :value="item.value" color="primary"></v-radio>
+            <v-radio :label="item.name" :value="item.value" color="secondary"></v-radio>
           </div>
         </v-radio-group>
         <v-divider></v-divider>
         <v-radio-group label="Decision" v-model="decisionFilterValue" column>
           <div v-for="item in decisionFilter" :key="item.name">
-            <v-radio :label="item.name" :value="item.value" color="accent"></v-radio>
+            <v-radio :label="item.name" :value="item.value" color="secondary"></v-radio>
           </div>
         </v-radio-group>
       </v-layout>
