@@ -38,7 +38,7 @@ export default {
     });
   },
   fetchContact(data) {
-    // fetch believer details and logs for one contact, with params = data.AccessToken and data.RandomID
+    // fetch believer details and logs for one contact, with params = data.AccessToken and data.BelieverID
     // returns response.data { Believer: object, BelieverLogs [objects]}
     return apiClient.get("/believer", {
       params: data
@@ -48,5 +48,23 @@ export default {
     console.log(data);
     // updates believer status for {AccessToken: String, RandomID: String, ChurchPostcode: String, BelieverStatus: String, ChangeLog: String}
     return apiClient.post("/believer/status", data);
+  },
+  changePassword(data) {
+    /* 
+    { 
+      "AccessToken": "3c6bdca6e446dd3810135d2445341087",
+	    "OldPassword": "(string)",
+      "NewPassword": "(string)" 
+    }
+  */
+    return apiClient.post("/change-password", data);
+  },
+  resetPassword(data) {
+    /* 
+    {
+      "UserName": "samuelchandra@gmail.com"
+    }
+    */
+    return apiClient.post("/reset-password", data);
   }
 };

@@ -3,7 +3,8 @@ import VueRouter from "vue-router";
 import store from "@/store";
 
 import Login from "./views/Login";
-import ChangePassword from "./views/ChangePassword";
+import ChangePassword from "./views/Example";
+
 Vue.use(VueRouter);
 
 const router = new VueRouter({

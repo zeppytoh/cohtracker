@@ -107,13 +107,54 @@ export default new Vuex.Store({
         dispatch("logout");
       }, expireTime * 1000);
     },
+    resetPassword({ commit }, email) {
+      commit("setLoading", true);
+      commit("setSnack", "Checking if that is a valid username");
+      const data = {
+        UserName: email
+      };
+      return cohservice
+        .resetPassword(data)
+        .then(res => {
+          commit(
+            "setSnack",
+            "Instructions to reset your password have been sent to your email"
+          );
+          return res;
+        })
+        .catch(error => {
+          commit(
+            "setSnack",
+            "Sorry, that is not a valid username. Perhaps check your typing?"
+          );
+          return error;
+        });
+    },
+    changePassword({ commit, state }, payload) {
+      commit("setLoading", true);
+      commit("setSnack", "Changing Password");
+      const data = {
+        AccessToken: state.AccessToken,
+        OldPassword: payload.OldPassword,
+        NewPassword: payload.NewPassword
+      };
+      return cohservice
+        .changePassword(data)
+        .then(res => {
+          commit("setSnack", "Password Changed");
+          return res;
+        })
+        .catch(error => {
+          commit("setSnack", "Error: Password could not be changed");
+          return error;
+        });
+    },
     authUser({ commit, dispatch }, authData) {
       commit("setLoading", true);
       commit("setSnack", "Authenticating User");
       return cohservice
         .authUser(authData)
         .then(res => {
-          console.log(res);
           const stateData = {
             token: res.data.AccessToken,
             role: res.data.Role,
@@ -132,8 +173,17 @@ export default new Vuex.Store({
           localStorage.setItem("church", JSON.stringify(res.data.Church));
           localStorage.setItem("expireDate", expireDate);
           dispatch("setLogoutTimer", 3600);
+          return res;
         })
-        .catch(error => console.log(error));
+        .catch(err => {
+          commit("setLoading", false);
+          commit(
+            "setSnack",
+            "Failed to login. Check your password or username"
+          );
+
+          return err;
+        });
     },
     tryAutoLogin({ commit }) {
       const token = localStorage.getItem("token");

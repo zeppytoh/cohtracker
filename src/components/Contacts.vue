@@ -55,7 +55,7 @@
             </v-select>
             <v-toolbar-items>
               <v-btn color="transparent" icon small @click.prevent="removeFilters">
-                <v-icon color="secondary">layers_clear</v-icon>
+                <v-icon color="secondary">label_off</v-icon>
               </v-btn>
               <v-btn
                 hidden-sm-and-up
@@ -64,7 +64,7 @@
                 small
                 @click.prevent="onToggleFilter"
               >
-                <v-icon color="secondary">filter_list</v-icon>
+                <v-icon color="secondary">label</v-icon>
               </v-btn>
             </v-toolbar-items>
           </v-toolbar>
@@ -136,7 +136,7 @@
                   small
                   color="secondary lighten-1"
                 >
-                  <v-icon>history</v-icon>History
+                  <v-icon>history</v-icon>&nbsp;History
                 </v-btn>
                 <v-spacer></v-spacer>
 
@@ -146,43 +146,47 @@
               </v-card-actions>
               <v-slide-y-transition>
                 <v-card
+                  color="grey lighten-2"
                   class="ma-1 elevation-0"
                   light
-                  color="grey lighten-4"
                   v-if="props.expanded == true"
                 >
                   <v-layout row wrap class="ma-0">
-                    <v-flex xs12>
+                    <v-flex class="grey lighten-2" xs12>
                       <div class="caption grey--text">Notes</div>
                       <div>{{ props.item.AdditionalComments }}</div>
                     </v-flex>
-                    <v-flex xs7>
+                    <v-flex xs7 class="grey lighten-4">
                       <div class="caption grey--text">Decision</div>
                       <div>{{ decisionText[props.item.DecisionMade] }}</div>
                     </v-flex>
-                    <v-flex xs5>
+                    <v-flex xs5 class="grey lighten-4">
                       <div class="caption grey--text">Language</div>
                       <div>{{ props.item.LanguageType }}</div>
                     </v-flex>
-                    <v-flex xs7>
+                    <v-flex xs7 class="grey lighten-2">
                       <div class="caption grey--text">Email</div>
                       <div>{{ props.item.EmailAddress }}</div>
                     </v-flex>
-                    <v-flex xs5>
+                    <v-flex xs5 class="grey lighten-2">
                       <div class="caption grey--text">Age Group</div>
                       <div>{{ ageGroups[props.item.AgeGroup] }}</div>
                     </v-flex>
-                    <v-flex xs12>
+                    <v-flex xs12 class="grey lighten-4">
                       <div class="caption grey--text">Rally Attended</div>
                       <div>{{ rallyTime[props.item.RallyTime] }}</div>
                     </v-flex>
-                    <v-flex xs7>
+                    <v-flex xs7 class="grey lighten-2">
                       <div class="caption grey--text">Friend</div>
                       <div>{{ props.item.NameOfFriend }}</div>
                     </v-flex>
                     <v-flex xs5>
                       <div class="caption grey--text">Friend's Contact</div>
                       <div>{{ props.item.FriendContactNumber }}</div>
+                    </v-flex>
+                    <v-flex xs12>
+                      <div class="caption grey--text">Friend's Church</div>
+                      <div>{{ props.item.FriendChurchName }}</div>
                     </v-flex>
 
                     <!-- <v-flex xs2 sm4 md2>
@@ -200,12 +204,12 @@
       <v-layout row wrap align-content-start>
         <v-flex xs12>
           <v-btn color="secondary" class="elevation-1 caption" @click.stop="onToggleFilter">
-            <v-icon class="left" color="secondary lighten-3">filter_list</v-icon>&nbsp;Toggle Filters
+            <v-icon class="left" color="secondary lighten-3">label</v-icon>Toggle Filters
           </v-btn>
           <v-btn color="secondary" class="elevation-1 caption" @click.stop="removeFilters">
-            <v-icon class="left" color="secondary lighten-3">layers_clear</v-icon>&nbsp;Clear Filters
+            <v-icon class="left" color="secondary lighten-3">label_off</v-icon>Clear Filters
           </v-btn>
-          <v-btn color="secondary lighten-1" class="elevation-1 caption" @click.stop="onExport">
+          <v-btn color="secondary lighten-2" class="elevation-1 caption" @click.stop="onExport">
             <v-icon class="left" color="secondary lighten-4">cloud_download</v-icon>&nbsp;Export to Excel spreadsheet
           </v-btn>
         </v-flex>

@@ -59,14 +59,10 @@
                 v-if="props.expanded == true"
               >
                 <v-card-text>
-                  <span class>Congregations</span>
+                  <span class>Current Contacts</span>
 
                   <ul>
-                    <li
-                      class="caption grey--text"
-                      v-for="i in props.item.CongregationArray"
-                      :key="i"
-                    >{{ i }}</li>
+                    <li class="caption grey--text" v-for="i in props.item.Stat" :key="i">{{ i }}</li>
                   </ul>
                 </v-card-text>
               </v-card>
