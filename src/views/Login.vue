@@ -40,7 +40,8 @@
                   </v-flex>
                   <v-flex xs12>
                     <v-card-actions>
-                      <p class="flex primary--text">Forgot password</p>
+                      <v-btn color="primary" flat router to="/forgotpassword">Forgot password</v-btn>
+
                       <v-spacer></v-spacer>
                       <v-btn block color="primary" @click="login" :loading="loading">Login</v-btn>
                     </v-card-actions>
@@ -76,15 +77,11 @@ export default {
         password: this.password
       })
         .then(res => {
-          console.log(res);
-          if (res.statusText != "OK") {
-            this.nameerror = "Please check your name";
-            this.passworderror = "Please check your password";
-          } else {
-            this.$router.replace("dashboard");
-          }
+          this.$router.replace("dashboard");
         })
         .catch((error, res) => {
+          this.nameerror = "Please check your name";
+          this.passworderror = "Please check your password";
           console.log("Error In Login,vue");
           console.log(error);
           console.log(res);

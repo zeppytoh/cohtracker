@@ -32,7 +32,7 @@ export default {
   created() {
     if (this.$store.dispatch("tryAutoLogin")) {
       console.log("AugoLogin returned true");
-      this.$router.replace("/dashboard/");
+      this.$router.replace("dashboard");
     } else {
       this.$router.replace("/");
     }

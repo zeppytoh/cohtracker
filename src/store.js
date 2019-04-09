@@ -33,15 +33,7 @@ export default new Vuex.Store({
       F: "Sunday, 19 May 2:00PM (Hindi)",
       G: "Sunday, 19 May 7:30PM (English)"
     },
-    ageGroupsMap: new Map([
-      ["A", "6 yo and below"],
-      ["B", "7-12 yo"],
-      ["C", "13-16 yo"],
-      ["D", "17-25 yo"],
-      ["E", "26-35 yo"],
-      ["F", "36-49 yo"],
-      ["G", "50 yo and above"]
-    ]),
+
     believerStatus: {
       "1": { text: "pending", color: "warning lighten-1" },
       "2": { text: "contacted", color: "success darken-1" },
@@ -107,14 +99,12 @@ export default new Vuex.Store({
         dispatch("logout");
       }, expireTime * 1000);
     },
-    resetPassword({ commit }, email) {
+    resetPassword({ commit }, payload) {
       commit("setLoading", true);
       commit("setSnack", "Checking if that is a valid username");
-      const data = {
-        UserName: email
-      };
+
       return cohservice
-        .resetPassword(data)
+        .resetPassword(payload)
         .then(res => {
           commit(
             "setSnack",
@@ -293,12 +283,16 @@ export default new Vuex.Store({
         return cohservice
           .fetchChurches({ AccessToken: state.AccessToken })
           .then(res => {
-            console.log("In Fetch Churches", res.data);
             const data = res.data;
             const churches = [];
             for (let key in data) {
               const church = data[key];
-              church.id = key;
+              church.TotalEnquirers =
+                church.Stat.StatusOneCount +
+                church.Stat.StatusTwoCount +
+                church.Stat.StatusThreeCount +
+                church.Stat.StatusFourCount;
+
               churches.push(church);
             }
             commit("setChurches", churches);

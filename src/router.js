@@ -3,7 +3,6 @@ import VueRouter from "vue-router";
 import store from "@/store";
 
 import Login from "./views/Login";
-import ChangePassword from "./views/Example";
 
 Vue.use(VueRouter);
 
@@ -27,7 +26,8 @@ const router = new VueRouter({
           name: "dashboard",
 
           components: {
-            default: () => import("./components/Churches")
+            default: () =>
+              import(/* webpackChunkName: "routes" */ "./components/Churches")
           },
           props: { default: true },
           beforeEnter: (to, from, next) => {
@@ -37,7 +37,8 @@ const router = new VueRouter({
                 store
                   .dispatch("fetchChurches")
                   .then(res => {
-                    console.log(res);
+                    store.commit("setLoading", false);
+
                     next();
                   })
                   .catch(error => {
@@ -56,7 +57,8 @@ const router = new VueRouter({
         {
           path: "contacts/:churchid?",
           components: {
-            default: () => import("./components/Contacts")
+            default: () =>
+              import(/* webpackChunkName: "routes" */ "./components/Contacts")
           },
           props: { default: true },
           beforeEnter: (to, from, next) => {
@@ -91,7 +93,13 @@ const router = new VueRouter({
     },
     {
       path: "/changepassword",
-      component: ChangePassword
+      component: () =>
+        import(/* webpackChunkName: "routes" */ "./views/Example.vue")
+    },
+    {
+      path: "/forgotpassword",
+      component: () =>
+        import(/* webpackChunkName: "routes" */ "./views/ForgotPassword.vue")
     },
     {
       path: "/churchadmin/:postcode?",

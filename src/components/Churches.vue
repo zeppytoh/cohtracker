@@ -36,12 +36,17 @@
                   <span v-else>{{ props.item.Name }}</span>
                 </v-flex>
                 <v-flex xs4>
-                  <v-btn
-                    light
-                    color="secondary lighten-2"
-                    class="caption black--text"
-                    @click.stop="onViewChurch(props.item)"
-                  >Contacts</v-btn>
+                  <v-badge overlap color="warning" left>
+                    <template v-slot:badge>
+                      <span>{{ props.item.TotalEnquirers }}</span>
+                    </template>
+                    <v-btn
+                      light
+                      color="secondary lighten-2"
+                      class="caption black--text"
+                      @click.stop="onViewChurch(props.item)"
+                    >Contacts</v-btn>
+                  </v-badge>
                 </v-flex>
               </v-layout>
             </v-card-title>
@@ -58,6 +63,7 @@
                 color="secondary darken-1"
                 v-if="props.expanded == true"
               >
+                <ChurchStat data="{contacts:232, pending:15, contacted:23}" options="options"/>
                 <v-card-text>
                   <span class>Current Contacts</span>
 
@@ -77,14 +83,33 @@
 <script>
 import router from "@/router";
 import { mapState, mapActions } from "vuex";
+import ChurchStat from "@/components/ChurchStat";
+
 export default {
   name: "Churches",
-
+  components: {
+    ChurchStat
+  },
   computed: {
     ...mapState(["Churches"])
   },
   data() {
     return {
+      options: {
+        scales: {
+          xAxes: [
+            {
+              barPercentage: 1.5,
+              barThickness: 6,
+              maxBarThickness: 8,
+              minBarLength: 2,
+              gridLines: {
+                offsetGridLines: true
+              }
+            }
+          ]
+        }
+      },
       search: "",
       expand: false,
       rowsPerPageItems: [6, 18, 54],

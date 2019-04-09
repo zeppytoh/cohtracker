@@ -1,75 +1,77 @@
 <template>
   <v-content class="contentGradient">
-    <form action>
-      <v-container fluid fill-height>
-        <v-layout justify-center>
-          <v-flex xs8 md4>
-            <v-card class="elevation-1 pa-3">
-              <v-card-text>
-                <div class="layout column align-center">
-                  <img src="static/COH_Eng_Brand-300.png" alt="Celebration of Hope" width="180">
-                  <h1 class="flex my-4 grey--text">Change Password</h1>
-                </div>
-              </v-card-text>
-              <v-flex xs12>
-                <v-text-field
-                  label="Current Password*"
-                  v-model="currpwd"
-                  @input="$v.currpwd.$touch()"
-                  @blur="$v.currpwd.$touch()"
-                  :type="showcurrpwd ? 'text' : 'password'"
-                  :append-icon="showcurrpwd ? 'visibility' : 'visibility_off'"
-                  @click:append="showcurrpwd = !showcurrpwd"
-                  required
-                  :error-messages="currpwdErrors"
-                ></v-text-field>
-              </v-flex>
-              <v-flex xs12>
-                <v-text-field
-                  label="New Password*"
-                  v-model="newpwd"
-                  hint="At least 6 characters"
-                  min="6"
-                  :error-messages="newpwdErrors"
-                  @input="$v.newpwd.$touch()"
-                  @blur="$v.newpwd.$touch()"
-                  @click:append="showpassword = !showpassword"
-                  :type="showpassword ? 'text' : 'password'"
-                  :append-icon="showpassword ? 'visibility' : 'visibility_off'"
-                  required
-                ></v-text-field>
-              </v-flex>
-              <v-flex xs12>
-                <v-text-field
-                  label="Confirm New Password*"
-                  hint="Passwords must match"
-                  v-model="repeatnewpwd"
-                  @input="$v.repeatnewpwd.$touch()"
-                  @blur="$v.repeatnewpwd.$touch()"
-                  :type="showpassword ? 'text' : 'password'"
-                  :append-icon="showpassword ? 'visibility' : 'visibility_off'"
-                  @click:append="showpassword = !showpassword"
-                  required
-                  :error-messages="passwordErrors"
-                ></v-text-field>
-              </v-flex>
-              <v-flex xs12>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    :disabled="$v.$invalid"
-                    color="primary"
-                    @click.prevent="onSubmit"
-                    :loading="loading"
-                  >Change password</v-btn>
-                  <v-btn color="secondary" @click.prevent="onCancel" :loading="loading">Cancel</v-btn>
-                </v-card-actions>
-              </v-flex>
-            </v-card>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </form>
+    <div class="changepassword">
+      <v-form>
+        <v-container fluid fill-height>
+          <v-layout justify-center>
+            <v-flex xs12 sm8 md6 lg4>
+              <v-card class="elevation-1 pa-3">
+                <v-card-text>
+                  <div class="layout column align-center">
+                    <img src="static/COH_Eng_Brand-300.png" alt="Celebration of Hope" width="180">
+                    <h1 class="flex my-4 grey--text">Gather Login</h1>
+                  </div>
+                </v-card-text>
+                <v-flex xs12>
+                  <v-text-field
+                    label="Current Password*"
+                    v-model="currpwd"
+                    @input="$v.currpwd.$touch()"
+                    @blur="$v.currpwd.$touch()"
+                    :type="showcurrpwd ? 'text' : 'password'"
+                    :append-icon="showcurrpwd ? 'visibility' : 'visibility_off'"
+                    @click:append="showcurrpwd = !showcurrpwd"
+                    required
+                    :error-messages="currpwdErrors"
+                  ></v-text-field>
+                </v-flex>
+                <v-flex xs12>
+                  <v-text-field
+                    label="New Password*"
+                    v-model="newpwd"
+                    hint="At least 6 characters"
+                    min="6"
+                    :error-messages="newpwdErrors"
+                    @input="$v.newpwd.$touch()"
+                    @blur="$v.newpwd.$touch()"
+                    @click:append="showpassword = !showpassword"
+                    :type="showpassword ? 'text' : 'password'"
+                    :append-icon="showpassword ? 'visibility' : 'visibility_off'"
+                    required
+                  ></v-text-field>
+                </v-flex>
+                <v-flex xs12>
+                  <v-text-field
+                    label="Confirm New Password*"
+                    hint="Passwords must match"
+                    v-model="repeatnewpwd"
+                    @input="$v.repeatnewpwd.$touch()"
+                    @blur="$v.repeatnewpwd.$touch()"
+                    :type="showpassword ? 'text' : 'password'"
+                    :append-icon="showpassword ? 'visibility' : 'visibility_off'"
+                    @click:append="showpassword = !showpassword"
+                    required
+                    :error-messages="passwordErrors"
+                  ></v-text-field>
+                </v-flex>
+                <v-flex xs12>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      :disabled="$v.$invalid"
+                      color="primary"
+                      @click.prevent="onSubmit"
+                      :loading="loading"
+                    >Change password</v-btn>
+                    <v-btn color="secondary" @click.prevent="onCancel" :loading="loading">Cancel</v-btn>
+                  </v-card-actions>
+                </v-flex>
+              </v-card>
+            </v-flex>
+          </v-layout>
+        </v-container>
+      </v-form>
+    </div>
   </v-content>
 </template>
 
@@ -157,5 +159,17 @@ export default {
   }
 };
 </script>
+
+<style>
+.changepassword {
+  height: 50%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: "";
+  z-index: 0;
+}
+</style>
 
 

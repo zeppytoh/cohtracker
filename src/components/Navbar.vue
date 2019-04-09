@@ -1,19 +1,9 @@
 <template>
   <v-toolbar dark clipped-left clipped-right fixed app class="coh-toolbar">
-    <!-- <v-toolbar-items v-if="isAuthenticated"><v-btn
-        @click="onClickBtn"
-        class="pt-3"
-        color="primary"
-        small
-        flat
-        router
-        :to="{name : 'dashboard'}"
-      >
-        <v-img :src="computeLogo" contain height="72"></v-img>
-    </v-btn></v-toolbar-items>-->
-    <v-btn @click="onClickBtn" flat class="pt-3" color="primary" small>
-      <v-img :src="computeLogo" contain height="72"></v-img>
-    </v-btn>
+    <v-toolbar-items v-if="isAuthenticated">
+      <v-toolbar-side-icon @click="onClickBtn"></v-toolbar-side-icon>
+    </v-toolbar-items>
+
     <v-toolbar-title class="body-2">{{ toolbarTitle }}</v-toolbar-title>
 
     <v-spacer></v-spacer>
