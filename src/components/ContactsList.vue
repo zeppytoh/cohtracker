@@ -243,7 +243,7 @@ export default {
       options: [
         { name: "pending", value: "1" },
         { name: "contacted", value: "2" },
-        { name: "missing", value: "3" },
+        { name: "unreachable", value: "3" },
         { name: "reassign", value: "4" }
       ],
       languageFilter: [
@@ -357,7 +357,7 @@ export default {
   &.pending {
     border-left: 6px solid var(--v-warning-lighten2);
   }
-  &.missing {
+  &.unreachable {
     border-left: 6px solid var(--v-grey-darken1);
   }
   &.uncontactable {

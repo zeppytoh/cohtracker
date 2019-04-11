@@ -60,8 +60,8 @@
 import { mapActions, mapState } from "vuex";
 export default {
   data: () => ({
-    username: "victortoh@cru.org.sg",
-    password: "469717",
+    username: "",
+    password: "",
     nameerror: "",
     passworderror: "",
     showpassword: false

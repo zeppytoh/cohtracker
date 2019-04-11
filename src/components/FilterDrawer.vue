@@ -46,7 +46,7 @@ export default {
     statusFilter: [
       { name: "Pending", value: "1" },
       { name: "Contacted", value: "2" },
-      { name: "Missing", value: "3" },
+      { name: "uncontactable", value: "3" },
       { name: "Reassign", value: "4" },
       { name: "All", value: null }
     ],
@@ -76,6 +76,9 @@ export default {
   watch: {
     $route(to) {
       this.searchTerm = to.query;
+      this.languageFilterValue = this.searchTerm.language || null;
+      this.statusFilterValue = this.searchTerm.status || null;
+      this.decisionFilterValue = this.searchTerm.decision || null;
     },
     languageFilterValue: function() {
       this.refreshContacts();

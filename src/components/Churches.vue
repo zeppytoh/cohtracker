@@ -11,7 +11,7 @@
       :search="search"
     >
       <template v-slot:header>
-        <v-toolbar color="transparent" prominent flat>
+        <v-toolbar v-if color="transparent" prominent flat>
           <v-layout row wrap>
             <v-flex xs12>
               <v-combobox
@@ -24,7 +24,7 @@
           </v-layout>
         </v-toolbar>
       </template>
-      <template v-slot:item="props">
+      <template slot="item" slot-scope="props">
         <v-flex xs12 sm6 lg4>
           <v-card class="pa-1 ma-0" dark color="secondary">
             <v-card-title primary-title>
@@ -60,17 +60,10 @@
               <v-card
                 class="ma-2 elevation-0"
                 dark
-                color="secondary darken-1"
-                v-if="props.expanded == true"
+                color="secondary lighten-2"
+                v-if="props.expanded"
               >
-                <ChurchStat data="{contacts:232, pending:15, contacted:23}" options="options"/>
-                <v-card-text>
-                  <span class>Current Contacts</span>
-
-                  <ul>
-                    <li class="caption grey--text" v-for="i in props.item.Stat" :key="i">{{ i }}</li>
-                  </ul>
-                </v-card-text>
+                <inquirer-stats :church="props.item"/>
               </v-card>
             </v-slide-y-transition>
           </v-card>
@@ -83,49 +76,23 @@
 <script>
 import router from "@/router";
 import { mapState, mapActions } from "vuex";
-import ChurchStat from "@/components/ChurchStat";
-
+import InquirerStats from "@/components/InquirerStats";
 export default {
   name: "Churches",
   components: {
-    ChurchStat
+    InquirerStats
   },
   computed: {
     ...mapState(["Churches"])
   },
   data() {
     return {
-      options: {
-        scales: {
-          xAxes: [
-            {
-              barPercentage: 1.5,
-              barThickness: 6,
-              maxBarThickness: 8,
-              minBarLength: 2,
-              gridLines: {
-                offsetGridLines: true
-              }
-            }
-          ]
-        }
-      },
       search: "",
       expand: false,
       rowsPerPageItems: [6, 18, 54],
       pagination: {
         rowsPerPage: 6
       },
-
-      panels: [],
-      languageFilter: [
-        { name: "English", value: "English" },
-        { name: "Mandarin", value: "Mandarin" },
-        { name: "Tagalog", value: "Tagalog" },
-        { name: "Children", value: "Children" },
-        { name: "None", value: null }
-      ],
-      languageFilterValue: null,
       searchTerm: null
     };
   },
@@ -155,3 +122,16 @@ export default {
   }
 };
 </script>
+
+<style lang="scss">
+.v-progress-linear {
+  border-radius: 12px;
+  margin: 0; // remove margin as the txt will create that margin
+}
+.progress-bar-text {
+  position: relative;
+  top: -20px;
+  left: 8px;
+  z-index: 1;
+}
+</style>

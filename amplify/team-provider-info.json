@@ -1,0 +1,14 @@
+{
+    "coh": {
+        "awscloudformation": {
+            "AuthRoleName": "cohtrack-20190409174922-authRole",
+            "UnauthRoleArn": "arn:aws:iam::839180115129:role/cohtrack-20190409174922-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::839180115129:role/cohtrack-20190409174922-authRole",
+            "Region": "ap-southeast-1",
+            "DeploymentBucketName": "cohtrack-20190409174922-deployment",
+            "UnauthRoleName": "cohtrack-20190409174922-unauthRole",
+            "StackName": "cohtrack-20190409174922",
+            "StackId": "arn:aws:cloudformation:ap-southeast-1:839180115129:stack/cohtrack-20190409174922/c10ed400-5aac-11e9-87e2-0a14ee878cf4"
+        }
+    }
+}

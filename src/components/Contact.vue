@@ -187,7 +187,7 @@ export default {
   &.pending {
     border-left: 6px solid var(--v-warning-lighten2);
   }
-  &.missing {
+  &.unreachable {
     border-left: 6px solid var(--v-grey-darken1);
   }
   &.uncontactable {

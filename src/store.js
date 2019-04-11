@@ -37,7 +37,7 @@ export default new Vuex.Store({
     believerStatus: {
       "1": { text: "pending", color: "warning lighten-1" },
       "2": { text: "contacted", color: "success darken-1" },
-      "3": { text: "missing", color: "grey lighten-1" },
+      "3": { text: "unreachable", color: "grey lighten-1" },
       "4": { text: "reassign", color: "primary lighten-2" }
     },
     decisionText: {
@@ -285,14 +285,26 @@ export default new Vuex.Store({
           .then(res => {
             const data = res.data;
             const churches = [];
+            function add(accumulator, a) {
+              return accumulator + a;
+            }
             for (let key in data) {
               const church = data[key];
-              church.TotalEnquirers =
-                church.Stat.StatusOneCount +
-                church.Stat.StatusTwoCount +
-                church.Stat.StatusThreeCount +
-                church.Stat.StatusFourCount;
-
+              church.id = key;
+              church.TotalLeaders = [
+                church.EnglishLeaderSize,
+                church.FilipinoLeaderSize,
+                church.HindiLeaderSize,
+                church.IndonesianLeaderSize,
+                church.MandarinLeaderSize,
+                church.TamilLeaderSize
+              ].reduce(add);
+              church.TotalEnquirers = [
+                church.Stat.StatusOneCount,
+                church.Stat.StatusTwoCount,
+                church.Stat.StatusThreeCount,
+                church.Stat.StatusFourCount
+              ].reduce(add);
               churches.push(church);
             }
             commit("setChurches", churches);

@@ -1,27 +1,58 @@
 <template>
   <div class="small">
-    <line-chart :chart-data="datacollection" :options="options"></line-chart>
+    <bar-chart :chart-data="datacollection" :options="options"></bar-chart>
     <button @click="fillData()">Randomize</button>
   </div>
 </template>
 
 <script>
-import LineChart from "@/Linechart.js";
+import BarChart from "@/Barchart.js";
 
 export default {
   components: {
-    LineChart
+    BarChart
+  },
+  props: {
+    churchStats: {
+      type: Object,
+      default: null
+    }
   },
   data() {
     return {
       datacollection: null,
       options: {
+        tooltips: {
+          mode: "index",
+          intersect: false
+        },
+        elements: {
+          rectangle: {
+            borderWidth: 2
+          }
+        },
+
+        responsive: true,
+        scales: {
+          xAxes: [
+            {
+              stacked: true
+            }
+          ],
+          yAxes: [
+            {
+              stacked: true
+            }
+          ]
+        },
         title: {
           display: true,
           fontColor: "#999",
-          text: "Custom Chart Title"
+          text: "Leaders"
         },
         legend: {
+          position: "right",
+
           labels: {
             // This more specific font property overrides the global property
             fontColor: "white"
@@ -36,27 +67,22 @@ export default {
   methods: {
     fillData() {
       this.datacollection = {
-        labels: [this.getRandomInt(), this.getRandomInt()],
+        labels: ["Leaders", "Enquirers"],
         datasets: [
           {
-            label: "Data One",
+            label: "English",
             backgroundColor: "#C4E4DE",
-            data: [
-              this.getRandomInt(),
-              this.getRandomInt(),
-              this.getRandomInt(),
-              this.getRandomInt()
-            ]
+            data: [this.getRandomInt(), this.getRandomInt()]
           },
           {
-            label: "Data Two",
+            label: "Mandarin",
             backgroundColor: "#f87979",
-            data: [
-              this.getRandomInt(),
-              this.getRandomInt(),
-              this.getRandomInt(),
-              this.getRandomInt()
-            ]
+            data: [this.getRandomInt(), this.getRandomInt()]
+          },
+          {
+            label: "Hindi",
+            backgroundColor: "#FC0",
+            data: [this.getRandomInt(), this.getRandomInt()]
           }
         ]
       };

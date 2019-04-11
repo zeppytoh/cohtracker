@@ -38,7 +38,7 @@
                         @click.prevent="onSubmit"
                         :loading="loading"
                       >Reset Password</v-btn>
-                      <v-btn color="secondary" @click.prevent="onCancel" :loading="loading">Cancel</v-btn>
+                      <v-btn color="secondary" @click.prevent="onCancel">Cancel</v-btn>
                     </v-card-actions>
                   </v-flex>
                 </v-layout>
@@ -94,7 +94,7 @@ export default {
         .then(res => {
           //successfully reset'
           console.log(res);
-          this.$router.replace("/dashboard");
+          this.$router.replace("/");
         })
         .catch(error => {
           console.log(error);
@@ -102,7 +102,8 @@ export default {
         });
     },
     onCancel() {
-      this.$router.replace("dashboard");
+      console.log("Cancel clicked");
+      this.$router.replace("/");
     },
     onClear() {
       this.$v.$reset();

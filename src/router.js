@@ -49,7 +49,20 @@ const router = new VueRouter({
                   });
               } else if (store.state.Role == "church-admin") {
                 store.commit("setLoading", false);
-                next("/dashboard/contacts/");
+                // next("/dashboard/contacts/");
+                store
+                  .dispatch("fetchChurches")
+                  .then(res => {
+                    store.commit("setLoading", false);
+
+                    next();
+                  })
+                  .catch(error => {
+                    console.log(
+                      "There was an error in fetchChurches:",
+                      error.response
+                    );
+                  });
               }
             } else next(false);
           }

@@ -1,5 +1,5 @@
 import Vue from "vue";
-import Vuetify, { VExpansionPanel, VLayout } from "vuetify/lib";
+import Vuetify, { VLayout } from "vuetify/lib";
 import "@/stylus/main.styl";
 import theme from "@/theme";
 // Vue.use(Vuetify, {
@@ -20,7 +20,6 @@ import theme from "@/theme";
 
 Vue.use(Vuetify, {
   components: {
-    VExpansionPanel,
     VLayout
   },
   theme,

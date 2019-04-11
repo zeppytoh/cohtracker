@@ -17,6 +17,11 @@
       >
         <template v-slot:header>
           <v-toolbar color="transparent" prominent flat>
+            <!-- <v-layout row wrap>
+              <v-flex xs12>
+                <v-combobox v-model="term" browser-autocomplete chips label="Type name"></v-combobox>
+              </v-flex>
+            </v-layout>-->
             <v-select
               v-model="languageFilterValue"
               item-value="value"
@@ -95,7 +100,7 @@
                       <v-btn
                         small
                         :color="believerStatus[props.item.BelieverStatus].color"
-                        class="caption mx-0 my-0 pa-0"
+                        class="caption mx-0 my-0 pa-1"
                         @click.prevent
                       >{{believerStatus[props.item.BelieverStatus].text}}</v-btn>
 
@@ -251,21 +256,24 @@ export default {
       this.searchTerm = {
         language: this.languageFilterValue,
         status: this.statusFilterValue,
-        decision: this.decisionFilterValue
+        decision: this.decisionFilterValue,
+        term: null
       };
     },
     statusFilterValue: function() {
       this.searchTerm = {
         language: this.languageFilterValue,
         status: this.statusFilterValue,
-        decision: this.decisionFilterValue
+        decision: this.decisionFilterValue,
+        term: null
       };
     },
     decisionFilterValue: function() {
       this.searchTerm = {
         language: this.languageFilterValue,
         status: this.statusFilterValue,
-        decision: this.decisionFilterValue
+        decision: this.decisionFilterValue,
+        term: null
       };
     }
   },
@@ -297,7 +305,7 @@ export default {
       options: [
         { name: "pending", value: "1" },
         { name: "contacted", value: "2" },
-        { name: "missing", value: "3" },
+        { name: "unreachable", value: "3" },
         { name: "reassign", value: "4" }
       ],
       languageFilter: [
@@ -313,7 +321,7 @@ export default {
       statusFilter: [
         { name: "pending", value: "1" },
         { name: "contacted", value: "2" },
-        { name: "missing", value: "3" },
+        { name: "unreachable", value: "3" },
         { name: "reassign", value: "4" },
         { name: "None", value: null }
       ],
@@ -336,7 +344,8 @@ export default {
         rowsPerPage: 10
       },
       logMessage: "",
-      iconIndex: 0
+      iconIndex: 0,
+      term: "" // text search term
     };
   },
   methods: {
@@ -360,6 +369,14 @@ export default {
     },
     removeFilters() {
       this.searchTerm = this.languageFilterValue = this.statusFilterValue = this.decisionFilterValue = null;
+      this.$router.push({
+        path: this.$router.path,
+        query: {
+          language: this.languageFilterValue,
+          status: this.statusFilterValue,
+          decision: this.decisionFilterValue
+        }
+      });
     },
 
     filterMultiple(item) {
@@ -432,7 +449,7 @@ export default {
   &.pending {
     border-left: 6px solid var(--v-warning-lighten2);
   }
-  &.missing {
+  &.unreachable {
     border-left: 6px solid grey;
   }
   &.contacted {
