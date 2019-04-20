@@ -11,7 +11,7 @@
       :search="search"
     >
       <template v-slot:header>
-        <v-toolbar v-if color="transparent" prominent flat>
+        <v-toolbar v-if="$store.state.Role=='super-admin'" color="transparent" prominent flat>
           <v-layout row wrap>
             <v-flex xs12>
               <v-combobox
@@ -26,7 +26,7 @@
       </template>
       <template slot="item" slot-scope="props">
         <v-flex xs12 sm6 lg4>
-          <v-card class="pa-1 ma-0" dark color="secondary">
+          <v-card class="pa-1 ma-0" dark color="secondary darken-1">
             <v-card-title primary-title>
               <v-layout row wrap justify-space-between>
                 <v-flex xs8>
@@ -34,9 +34,12 @@
                     v-if="(props.item.Name.length > 45 && props.item.ChurchAbbreviation.length > 0)"
                   >{{ props.item.ChurchAbbreviation }}</span>
                   <span v-else>{{ props.item.Name }}</span>
+                  <div>
+                    <span class="caption accent--text">{{ props.item.Address }}</span>
+                  </div>
                 </v-flex>
                 <v-flex xs4>
-                  <v-badge overlap color="warning" left>
+                  <v-badge overlap color="warning">
                     <template v-slot:badge>
                       <span>{{ props.item.TotalEnquirers }}</span>
                     </template>
@@ -60,7 +63,7 @@
               <v-card
                 class="ma-2 elevation-0"
                 dark
-                color="secondary lighten-2"
+                color="secondary darken-2"
                 v-if="props.expanded"
               >
                 <inquirer-stats :church="props.item"/>

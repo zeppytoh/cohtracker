@@ -40,7 +40,7 @@ export default {
       links: [
         {
           icon: "dashboard",
-          text: "Dashboard",
+          text: "Church",
           routename: "/dashboard/"
         },
         {
@@ -57,7 +57,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["image", "color"]),
+    ...mapState(["image", "color", "Church"]),
     ...mapGetters(["isAuthenticated"]),
     computeLogo() {
       return "static/COH_Eng_White-300.png";

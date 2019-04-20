@@ -35,10 +35,11 @@ export default new Vuex.Store({
     },
 
     believerStatus: {
+      "0": { text: "unassigned", color: "primary darken-1" },
       "1": { text: "pending", color: "warning lighten-1" },
       "2": { text: "contacted", color: "success darken-1" },
       "3": { text: "unreachable", color: "grey lighten-1" },
-      "4": { text: "reassign", color: "primary lighten-2" }
+      "4": { text: "reassign", color: "primary lighten-1" }
     },
     decisionText: {
       A: "Prayed and received Christ",
