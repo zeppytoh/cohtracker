@@ -96,34 +96,6 @@ const router = new VueRouter({
           }
         },
         {
-          path: "contactssearch/:churchid?",
-          components: {
-            default: () =>
-              import(/* webpackChunkName: "routes" */ "./components/ContactsSearch")
-          },
-          props: { default: true },
-          beforeEnter: (to, from, next) => {
-            if (store.state.AccessToken) {
-              store.commit("setLoading", true);
-              store
-                .dispatch("fetchContacts", to.params.churchid)
-                .then(res => {
-                  store.commit("setContacts", res.data);
-                  next();
-                })
-                .catch(error => {
-                  console.log(
-                    "There was an error in fetchContacts:",
-                    error.response
-                  );
-                  next(false);
-                });
-            } else {
-              next(false);
-            }
-          }
-        },
-        {
           path: "contacts/history/:id?",
           props: { default: true },
           components: {
