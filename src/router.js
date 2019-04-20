@@ -113,22 +113,6 @@ const router = new VueRouter({
       path: "/forgotpassword",
       component: () =>
         import(/* webpackChunkName: "routes" */ "./views/ForgotPassword.vue")
-    },
-    {
-      path: "/churchadmin/:postcode?",
-      name: "churchadmin",
-      props: true,
-      beforeEnter: (to, from, next) => {
-        if (store.state.AccessToken) {
-          console.log("about to route");
-          next();
-        } else {
-          next({ name: "home" });
-        }
-      },
-      component: () => {
-        import(/* webpackChunkName: "routes" */ "./views/ChurchAdmin.vue");
-      }
     }
   ]
 });
