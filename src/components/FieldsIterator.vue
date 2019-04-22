@@ -237,7 +237,7 @@ export default {
       console.log("Dialog closed");
     },
     onExport() {
-      let newContacts = Array.from(this.filteredItems);
+      let newContacts = JSON.parse(JSON.stringify(this.Contacts));
       for (var i = 0; i < newContacts.length; i++) {
         newContacts[i].Status = this.believerStatus[
           newContacts[i]["BelieverStatus"]
