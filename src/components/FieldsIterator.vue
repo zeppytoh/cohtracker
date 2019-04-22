@@ -139,7 +139,7 @@
       </v-flex>
     </template>
     <template v-slot:footer>
-      <v-btn color="secondary darken-1" class="elevation-1 caption" @click.stop="onExport">
+      <v-btn color="secondary darken-1" class="elevation-1 caption" @click.stop="onExportFiltered">
         <v-icon class="left" color="secondary lighten-4">cloud_download</v-icon>&nbsp;Export these Inquirers
       </v-btn>
     </template>
@@ -236,8 +236,8 @@ export default {
     close() {
       console.log("Dialog closed");
     },
-    onExport() {
-      let newContacts = JSON.parse(JSON.stringify(this.Contacts));
+    onExportFiltered() {
+      let newContacts = JSON.parse(JSON.stringify(this.filteredItems));
       for (var i = 0; i < newContacts.length; i++) {
         newContacts[i].Status = this.believerStatus[
           newContacts[i]["BelieverStatus"]
