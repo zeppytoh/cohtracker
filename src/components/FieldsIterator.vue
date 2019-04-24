@@ -204,6 +204,9 @@ export default {
           : true) &&
         (this.search["decision"]
           ? item.DecisionMade === this.search["decision"]
+          : true) &&
+        (this.search["rally"]
+          ? item.RallyTime === this.search["rally"]
           : true)
       );
     },
@@ -268,8 +271,10 @@ export default {
           (this.search["status"]
             ? this.believerStatus[this.search["status"]].text
             : "") +
-          "-" +
+            "-" +
           (this.search["decision"] ? this.search["decision"] : "") +
+          "-" +
+          (this.search["rally"] ? this.search["rally"] : "") +
           ".xlsx";
       } else {
         filename =
@@ -282,6 +287,8 @@ export default {
             : "") +
           "-" +
           (this.search["decision"] ? this.search["decision"] : "") +
+          "-" +
+          (this.search["rally"] ? this.search["rally"] : "") +
           ".xlsx";
       }
       XLSX.writeFile(wb, filename); // name of the file is 'book.xlsx'

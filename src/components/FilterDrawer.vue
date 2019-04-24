@@ -24,6 +24,12 @@
             <v-radio :label="item.name" :value="item.value" color="secondary"></v-radio>
           </div>
         </v-radio-group>
+        <v-divider></v-divider>
+        <v-radio-group label="Rally" v-model="rallyFilterValue" column>
+          <div v-for="item in rallyFilter" :key="item.name">
+            <v-radio :label="item.name" :value="item.value" color="secondary"></v-radio>
+          </div>
+        </v-radio-group>
       </v-layout>
     </v-container>
   </v-navigation-drawer>
@@ -58,9 +64,20 @@ export default {
       { name: "Others", value: "E" },
       { name: "All", value: null }
     ],
+    rallyFilter: [
+        { name: "17 May PM", value: "A" },
+        { name: "18 May AM", value: "B" },
+        { name: "18 May PM (C)", value: "C" },
+        { name: "18 May PM (T)", value: "D" },
+        { name: "19 May AM", value: "E" },
+        { name: "19 May PM (H)", value: "F" },
+        { name: "19 May PM (E)", value: "G" },
+        { name: "All", value: null }
+      ],
     statusFilterValue: null,
     languageFilterValue: null,
-    decisionFilterValue: null
+    decisionFilterValue: null,
+    rallyFilterValue: null
   }),
   computed: {
     ...mapState(["drawerRight"]),
@@ -79,6 +96,7 @@ export default {
       this.languageFilterValue = this.searchTerm.language || null;
       this.statusFilterValue = this.searchTerm.status || null;
       this.decisionFilterValue = this.searchTerm.decision || null;
+      this.rallyFilterValue = this.searchTerm.rally || null;
     },
     languageFilterValue: function() {
       this.refreshContacts();
@@ -88,6 +106,9 @@ export default {
     },
     decisionFilterValue: function() {
       this.refreshContacts();
+    },
+    rallyFilterValue: function() {
+      this.refreshContacts();
     }
   },
   created() {
@@ -95,6 +116,7 @@ export default {
     this.languageFilterValue = this.searchTerm.language || null;
     this.statusFilterValue = this.searchTerm.status || null;
     this.decisionFilterValue = this.searchTerm.decision || null;
+    this.rallyFilterValue = this.searchTerm.rally || null;
   },
   methods: {
     ...mapMutations(["setDrawerRight", "toggleDrawerRight"]),
@@ -105,7 +127,8 @@ export default {
         query: {
           language: this.languageFilterValue,
           status: this.statusFilterValue,
-          decision: this.decisionFilterValue
+          decision: this.decisionFilterValue,
+          rally: this.rallyFilterValue
         }
       });
     }

@@ -69,6 +69,7 @@ export default {
       this.languageFilterValue = this.searchTerm.language || null;
       this.statusFilterValue = this.searchTerm.status || null;
       this.decisionFilterValue = this.searchTerm.decision || null;
+      this.rallyFilterValue = this.searchTerm.rally || null;
 
       this.search = this.searchTerm;
 
@@ -88,21 +89,32 @@ export default {
       this.searchTerm = {
         language: this.languageFilterValue,
         status: this.statusFilterValue,
-        decision: this.decisionFilterValue
+        decision: this.decisionFilterValue,
+        rally: this.rallyFilterValue
       };
     },
     statusFilterValue: function() {
       this.searchTerm = {
         language: this.languageFilterValue,
         status: this.statusFilterValue,
-        decision: this.decisionFilterValue
+        decision: this.decisionFilterValue,
+        rally: this.rallyFilterValue
       };
     },
     decisionFilterValue: function() {
       this.searchTerm = {
         language: this.languageFilterValue,
         status: this.statusFilterValue,
-        decision: this.decisionFilterValue
+        decision: this.decisionFilterValue,
+        rally: this.rallyFilterValue
+      };
+    },
+    rallyFilterValue: function() {
+      this.searchTerm = {
+        language: this.languageFilterValue,
+        status: this.statusFilterValue,
+        decision: this.decisionFilterValue,
+        rally: this.rallyFilterValue
       };
     }
   },
@@ -111,6 +123,7 @@ export default {
     this.languageFilterValue = this.searchTerm.language || null;
     this.statusFilterValue = this.searchTerm.status || null;
     this.decisionFilterValue = this.searchTerm.decision || null;
+    this.rallyFilterValue = this.searchTerm.rally || null;
     if (this.searchTerm) {
       this.search = this.searchTerm;
       this.iteratorComponent = "FieldsIterator";
@@ -139,7 +152,6 @@ export default {
     return {
       iteratorComponent: "FieldsIterator",
       filterDrawer: false,
-
       languageFilter: [
         { name: "English", value: "English" },
         { name: "Mandarin", value: "Mandarin" },
@@ -165,9 +177,20 @@ export default {
         { name: "Others", value: "E" },
         { name: "None", value: null }
       ],
+      rallyFilter: [
+        { name: "17 May PM", value: "A" },
+        { name: "18 May AM", value: "B" },
+        { name: "18 May PM (C)", value: "C" },
+        { name: "18 May PM (T)", value: "D" },
+        { name: "19 May AM", value: "E" },
+        { name: "19 May PM (H)", value: "F" },
+        { name: "19 May PM (E)", value: "G" },
+        { name: "None", value: null }
+      ],
       statusFilterValue: null,
       languageFilterValue: null,
       decisionFilterValue: null,
+      rallyFilterValue: null,
       max25chars: v => v.length <= 35 || "Input too long!",
       searchTerm: null,
       searchText: "",
@@ -215,13 +238,14 @@ export default {
       XLSX.writeFile(wb, filename); // name of the file is 'book.xlsx'
     },
     removeFilters() {
-      this.searchTerm = this.languageFilterValue = this.statusFilterValue = this.decisionFilterValue = null;
+      this.searchTerm = this.languageFilterValue = this.statusFilterValue = this.decisionFilterValue = this.rallyFilterValue = null;
       this.$router.push({
         path: this.$router.path,
         query: {
           language: this.languageFilterValue,
           status: this.statusFilterValue,
-          decision: this.decisionFilterValue
+          decision: this.decisionFilterValue,
+          rally: this.rallyFilterValue
         }
       });
     },
