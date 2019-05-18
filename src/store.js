@@ -15,14 +15,14 @@ export default new Vuex.Store({
     Contacts: null, // list of contacts for current church
     Churches: null, // list of church or churches that admin can access
     ageGroups: {
-      A: "6 yo and below",
-
-      B: "7-12 yo",
-      C: "13-16 yo",
-      D: "17-25 yo",
-      E: "26-35 yo",
-      F: "36-49 yo",
-      G: "50 yo and above"
+      A: "6 years old and below",
+      B: "7-12 years old",
+      C: "13-16 years old",
+      D: "17-25 years old",
+      E: "26-35 years old",
+      F: "36-49 years old",
+      G: "50-64 years old",
+      H: "65 years old and above"
     },
     rallyTime: {
       A: "Friday, 17 May 7:30PM (English)",
@@ -31,7 +31,8 @@ export default new Vuex.Store({
       D: "Saturday, 18 May 7:30PM (Tamil)",
       E: "Sunday, 19 May 10:30AM (Filipino/English)",
       F: "Sunday, 19 May 2:00PM (Hindi)",
-      G: "Sunday, 19 May 7:30PM (English)"
+      G: "Sunday, 19 May 7:30PM (English)",
+      H: "None"
     },
 
     believerStatus: {
@@ -45,7 +46,8 @@ export default new Vuex.Store({
       A: "Prayed and received Christ",
       B: "Rededicated",
       C: "Interested",
-      D: "Like to join church"
+      D: "Like to join church",
+      E: "Other"
     },
     drawer: null,
     drawerRight: null,
@@ -298,7 +300,8 @@ export default new Vuex.Store({
                 church.HindiLeaderSize,
                 church.IndonesianLeaderSize,
                 church.MandarinLeaderSize,
-                church.TamilLeaderSize
+                church.TamilLeaderSize,
+                church.ChildrenLeaderSize
               ].reduce(add);
               church.TotalEnquirers = [
                 church.Stat.StatusOneCount,

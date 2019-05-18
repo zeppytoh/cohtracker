@@ -185,6 +185,7 @@ export default {
         { name: "19 May AM", value: "E" },
         { name: "19 May PM (H)", value: "F" },
         { name: "19 May PM (E)", value: "G" },
+        { name: "None", value: "H" },
         { name: "None", value: null }
       ],
       statusFilterValue: null,
@@ -230,10 +231,11 @@ export default {
       XLSX.utils.book_append_sheet(wb, contactsWS, "contacts");
       // add Worksheet to Workbook
       var filename;
+      var dateTime = new Date().toLocaleString('en-GB');
       if (this.Church.Name != "") {
-        filename = this.Church.Name + ".xlsx";
+        filename = this.Church.Name + "-" + dateTime + ".xlsx";
       } else {
-        filename = "SuperAdmin.xlsx";
+        filename = "SuperAdmin" + "-" + dateTime + ".xlsx";
       }
       XLSX.writeFile(wb, filename); // name of the file is 'book.xlsx'
     },

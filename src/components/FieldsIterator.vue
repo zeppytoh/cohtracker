@@ -262,33 +262,31 @@ export default {
       XLSX.utils.book_append_sheet(wb, contactsWS, "contacts");
       // add Worksheet to Workbook
       var filename;
+      var dateTime = new Date().toLocaleString('en-GB');
       if (this.Church.Name != "") {
         filename =
           this.Church.Name +
           "-" +
-          (this.search["language"] ? this.search["language"] : "") +
-          "-" +
+          (this.search["language"] ? "-" + this.search["language"] : "") +
           (this.search["status"]
-            ? this.believerStatus[this.search["status"]].text
+            ? "-" + this.believerStatus[this.search["status"]].text
             : "") +
-            "-" +
-          (this.search["decision"] ? this.search["decision"] : "") +
+          (this.search["decision"] ? "-" + this.search["decision"] : "") +
+          (this.search["rally"] ? "-" + this.search["rally"] : "") +
           "-" +
-          (this.search["rally"] ? this.search["rally"] : "") +
+          dateTime +
           ".xlsx";
       } else {
         filename =
           "SuperAdmin" +
-          "-" +
-          (this.search["language"] ? this.search["language"] : "") +
-          "-" +
+          (this.search["language"] ? "-" + this.search["language"] : "") +
           (this.search["status"]
-            ? this.believerStatus[this.search["status"]].text
+            ? "-" + this.believerStatus[this.search["status"]].text
             : "") +
+          (this.search["decision"] ? "-" + this.search["decision"] : "") +
+          (this.search["rally"] ? "-" + this.search["rally"] : "") +
           "-" +
-          (this.search["decision"] ? this.search["decision"] : "") +
-          "-" +
-          (this.search["rally"] ? this.search["rally"] : "") +
+          dateTime +
           ".xlsx";
       }
       XLSX.writeFile(wb, filename); // name of the file is 'book.xlsx'
