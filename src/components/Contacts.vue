@@ -39,7 +39,6 @@ import { mapState, mapMutations, mapActions } from "vuex";
 import FilterDrawer from "@/components/FilterDrawer";
 import NameIterator from "@/components/NameIterator";
 import FieldsIterator from "@/components/FieldsIterator";
-
 import XLSX from "xlsx";
 export default {
   components: {

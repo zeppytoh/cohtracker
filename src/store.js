@@ -34,7 +34,6 @@ export default new Vuex.Store({
       G: "Sunday, 19 May 7:30PM (English)",
       H: "None"
     },
-
     believerStatus: {
       "0": { text: "unassigned", color: "primary darken-1" },
       "1": { text: "pending", color: "warning lighten-1" },
@@ -56,7 +55,7 @@ export default new Vuex.Store({
     snack: "",
     color: "success",
     image:
-      "https://celebrationofhope.sg/wp-content/uploads/revslider/home-1-slider/brand-image-copy.jpg"
+      "static/brand-image-copy.jpg"
   },
   mutations: {
     authUser(state, userData) {
@@ -316,6 +315,86 @@ export default new Vuex.Store({
           })
           .catch(error => console.log(error));
       }
+    },
+    fetchChurchesCompleted({ state, commit }) {
+      if (state.AccessToken) {
+        return cohservice
+          .fetchChurches({ AccessToken: state.AccessToken })
+          .then(res => {
+            const data = res.data;
+            const churches = [];
+            function add(accumulator, a) {
+              return accumulator + a;
+            }
+            for (let key in data) {
+              const church = data[key];
+              church.id = key;
+              church.TotalLeaders = [
+                church.EnglishLeaderSize,
+                church.FilipinoLeaderSize,
+                church.HindiLeaderSize,
+                church.IndonesianLeaderSize,
+                church.MandarinLeaderSize,
+                church.TamilLeaderSize,
+                church.ChildrenLeaderSize
+              ].reduce(add);
+              church.TotalEnquirers = [
+                church.Stat.StatusOneCount,
+                church.Stat.StatusTwoCount,
+                church.Stat.StatusThreeCount,
+                church.Stat.StatusFourCount
+              ].reduce(add);
+
+              // Check if it must be pushed
+              if (church.Stat.StatusOneCount == 0) {
+                churches.push(church);
+              }
+            }
+            commit("setChurches", churches);
+            return churches;
+          })
+          .catch(error => console.log(error));
+      }
+    },
+    fetchChurchesPending({ state, commit }) {
+      if (state.AccessToken) {
+        return cohservice
+          .fetchChurches({ AccessToken: state.AccessToken })
+          .then(res => {
+            const data = res.data;
+            const churches = [];
+            function add(accumulator, a) {
+              return accumulator + a;
+            }
+            for (let key in data) {
+              const church = data[key];
+              church.id = key;
+              church.TotalLeaders = [
+                church.EnglishLeaderSize,
+                church.FilipinoLeaderSize,
+                church.HindiLeaderSize,
+                church.IndonesianLeaderSize,
+                church.MandarinLeaderSize,
+                church.TamilLeaderSize,
+                church.ChildrenLeaderSize
+              ].reduce(add);
+              church.TotalEnquirers = [
+                church.Stat.StatusOneCount,
+                church.Stat.StatusTwoCount,
+                church.Stat.StatusThreeCount,
+                church.Stat.StatusFourCount
+              ].reduce(add);
+
+              // Check if it must be pushed
+              if (church.Stat.StatusOneCount > 0) {
+                churches.push(church);
+              }
+            }
+            commit("setChurches", churches);
+            return churches;
+          })
+          .catch(error => console.log(error));
+      }
     }
   },
   getters: {
@@ -334,10 +413,6 @@ export default new Vuex.Store({
     Contacts(state) {
       return state.Contacts;
     },
-
     FullName: state => state.FullName
-    // getContactById: (state, id) => {
-    //   return _.findWhere(state.Contacts, { id: id });
-    // }
   }
 });
