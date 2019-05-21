@@ -202,7 +202,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["updateContact", "fetchContacts"]),
+    ...mapActions(["updateContact", "fetchContacts", "setSnackMessage"]),
     ...mapMutations(["toggleDrawerRight", "setMobile", "setSnack"]),
     onToggleFilter() {
       this.toggleDrawerRight();

@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import { set, toggle } from "@/utils/vuex";
 
 import cohservice from "@/services/cohservice.js";
+import router from "@/router.js";
 
 Vue.use(Vuex);
 
@@ -210,8 +211,8 @@ export default new Vuex.Store({
     logout({ commit }) {
       commit("clearAuthData");
       localStorage.clear();
-
       commit("setSnack", "Logging out");
+      router.push({path: "/"});
     },
     updateContact({ commit, state }, payload) {
       const data = {
@@ -230,6 +231,9 @@ export default new Vuex.Store({
           commit("setSnack", "Contact Saved");
         })
         .catch(error => console.log(error));
+    },
+    setSnackMessage({ commit }, message) {
+      commit("setSnack", message);
     },
     fetchContact({ state }, payload) {
       console.log(payload);
