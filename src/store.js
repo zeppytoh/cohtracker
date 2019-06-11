@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import { set, toggle } from "@/utils/vuex";
 
 import cohservice from "@/services/cohservice.js";
+import router from "@/router.js";
 
 Vue.use(Vuex);
 
@@ -15,14 +16,14 @@ export default new Vuex.Store({
     Contacts: null, // list of contacts for current church
     Churches: null, // list of church or churches that admin can access
     ageGroups: {
-      A: "6 yo and below",
-
-      B: "7-12 yo",
-      C: "13-16 yo",
-      D: "17-25 yo",
-      E: "26-35 yo",
-      F: "36-49 yo",
-      G: "50 yo and above"
+      A: "6 years old and below",
+      B: "7-12 years old",
+      C: "13-16 years old",
+      D: "17-25 years old",
+      E: "26-35 years old",
+      F: "36-49 years old",
+      G: "50-64 years old",
+      H: "65 years old and above"
     },
     rallyTime: {
       A: "Friday, 17 May 7:30PM (English)",
@@ -31,9 +32,9 @@ export default new Vuex.Store({
       D: "Saturday, 18 May 7:30PM (Tamil)",
       E: "Sunday, 19 May 10:30AM (Filipino/English)",
       F: "Sunday, 19 May 2:00PM (Hindi)",
-      G: "Sunday, 19 May 7:30PM (English)"
+      G: "Sunday, 19 May 7:30PM (English)",
+      H: "None"
     },
-
     believerStatus: {
       "0": { text: "unassigned", color: "primary darken-1" },
       "1": { text: "pending", color: "warning lighten-1" },
@@ -45,7 +46,8 @@ export default new Vuex.Store({
       A: "Prayed and received Christ",
       B: "Rededicated",
       C: "Interested",
-      D: "Like to join church"
+      D: "Like to join church",
+      E: "Other"
     },
     drawer: null,
     drawerRight: null,
@@ -54,7 +56,7 @@ export default new Vuex.Store({
     snack: "",
     color: "success",
     image:
-      "https://celebrationofhope.sg/wp-content/uploads/revslider/home-1-slider/brand-image-copy.jpg"
+      "static/brand-image-copy.jpg"
   },
   mutations: {
     authUser(state, userData) {
@@ -209,8 +211,8 @@ export default new Vuex.Store({
     logout({ commit }) {
       commit("clearAuthData");
       localStorage.clear();
-
       commit("setSnack", "Logging out");
+      router.push({path: "/"});
     },
     updateContact({ commit, state }, payload) {
       const data = {
@@ -229,6 +231,9 @@ export default new Vuex.Store({
           commit("setSnack", "Contact Saved");
         })
         .catch(error => console.log(error));
+    },
+    setSnackMessage({ commit }, message) {
+      commit("setSnack", message);
     },
     fetchContact({ state }, payload) {
       console.log(payload);
@@ -298,7 +303,8 @@ export default new Vuex.Store({
                 church.HindiLeaderSize,
                 church.IndonesianLeaderSize,
                 church.MandarinLeaderSize,
-                church.TamilLeaderSize
+                church.TamilLeaderSize,
+                church.ChildrenLeaderSize
               ].reduce(add);
               church.TotalEnquirers = [
                 church.Stat.StatusOneCount,
@@ -307,6 +313,86 @@ export default new Vuex.Store({
                 church.Stat.StatusFourCount
               ].reduce(add);
               churches.push(church);
+            }
+            commit("setChurches", churches);
+            return churches;
+          })
+          .catch(error => console.log(error));
+      }
+    },
+    fetchChurchesCompleted({ state, commit }) {
+      if (state.AccessToken) {
+        return cohservice
+          .fetchChurches({ AccessToken: state.AccessToken })
+          .then(res => {
+            const data = res.data;
+            const churches = [];
+            function add(accumulator, a) {
+              return accumulator + a;
+            }
+            for (let key in data) {
+              const church = data[key];
+              church.id = key;
+              church.TotalLeaders = [
+                church.EnglishLeaderSize,
+                church.FilipinoLeaderSize,
+                church.HindiLeaderSize,
+                church.IndonesianLeaderSize,
+                church.MandarinLeaderSize,
+                church.TamilLeaderSize,
+                church.ChildrenLeaderSize
+              ].reduce(add);
+              church.TotalEnquirers = [
+                church.Stat.StatusOneCount,
+                church.Stat.StatusTwoCount,
+                church.Stat.StatusThreeCount,
+                church.Stat.StatusFourCount
+              ].reduce(add);
+
+              // Check if it must be pushed
+              if (church.Stat.StatusOneCount == 0) {
+                churches.push(church);
+              }
+            }
+            commit("setChurches", churches);
+            return churches;
+          })
+          .catch(error => console.log(error));
+      }
+    },
+    fetchChurchesPending({ state, commit }) {
+      if (state.AccessToken) {
+        return cohservice
+          .fetchChurches({ AccessToken: state.AccessToken })
+          .then(res => {
+            const data = res.data;
+            const churches = [];
+            function add(accumulator, a) {
+              return accumulator + a;
+            }
+            for (let key in data) {
+              const church = data[key];
+              church.id = key;
+              church.TotalLeaders = [
+                church.EnglishLeaderSize,
+                church.FilipinoLeaderSize,
+                church.HindiLeaderSize,
+                church.IndonesianLeaderSize,
+                church.MandarinLeaderSize,
+                church.TamilLeaderSize,
+                church.ChildrenLeaderSize
+              ].reduce(add);
+              church.TotalEnquirers = [
+                church.Stat.StatusOneCount,
+                church.Stat.StatusTwoCount,
+                church.Stat.StatusThreeCount,
+                church.Stat.StatusFourCount
+              ].reduce(add);
+
+              // Check if it must be pushed
+              if (church.Stat.StatusOneCount > 0) {
+                churches.push(church);
+              }
             }
             commit("setChurches", churches);
             return churches;
@@ -331,10 +417,6 @@ export default new Vuex.Store({
     Contacts(state) {
       return state.Contacts;
     },
-
     FullName: state => state.FullName
-    // getContactById: (state, id) => {
-    //   return _.findWhere(state.Contacts, { id: id });
-    // }
   }
 });

@@ -72,6 +72,7 @@ export default {
         { name: "19 May AM", value: "E" },
         { name: "19 May PM (H)", value: "F" },
         { name: "19 May PM (E)", value: "G" },
+        { name: "None", value: "H" },
         { name: "All", value: null }
       ],
     statusFilterValue: null,

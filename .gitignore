@@ -1,5 +1,9 @@
+# Unecessary files
 .DS_Store
+
+# node js files that are not needed
 node_modules
+package-lock.json
 /dist
 
 # local env files

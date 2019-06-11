@@ -13,7 +13,6 @@ const router = new VueRouter({
     {
       path: "/",
       name: "home",
-
       component: Login
     },
     {
@@ -21,10 +20,10 @@ const router = new VueRouter({
       props: true,
       component: () => import("./views/Dashboard.vue"),
       children: [
+        // Churches
         {
           path: "",
           name: "dashboard",
-
           components: {
             default: () =>
               import(/* webpackChunkName: "routes" */ "./components/Churches")
@@ -67,6 +66,65 @@ const router = new VueRouter({
             } else next(false);
           }
         },
+        // Churches - Completed
+        {
+          path: "churches/completed/",
+          components: {
+            default: () =>
+              import(/* webpackChunkName: "routes" */ "./components/churches/ChurchesCompleted")
+          },
+          props: { default: true },
+          beforeEnter: (to, from, next) => {
+            if (store.state.AccessToken) {
+              store.commit("setLoading", true);
+              if (store.state.Role == "super-admin") {
+                store
+                  .dispatch("fetchChurchesCompleted")
+                  .then(res => {
+                    store.commit("setLoading", false);
+
+                    next();
+                  })
+                  .catch(error => {
+                    console.log(
+                      "There was an error in fetchChurches:",
+                      error.response
+                    );
+                  });
+              }
+            } else next(false);
+          }
+        },
+        // Churches - Pending
+        {
+          path: "churches/pending/",
+          components: {
+            default: () =>
+              import(/* webpackChunkName: "routes" */ "./components/churches/ChurchesPending")
+          },
+          props: { default: true },
+          beforeEnter: (to, from, next) => {
+            if (store.state.AccessToken) {
+              store.commit("setLoading", true);
+              if (store.state.Role == "super-admin") {
+                store
+                  .dispatch("fetchChurchesPending")
+                  .then(res => {
+                    store.commit("setLoading", false);
+
+                    next();
+                  })
+                  .catch(error => {
+                    console.log(
+                      "There was an error in fetchChurches:",
+                      error.response
+                    );
+                  });
+              }
+            } else next(false);
+          }
+        },
+        // Inquirers
         {
           path: "contacts/:churchid?",
           components: {
