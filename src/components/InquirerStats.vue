@@ -66,6 +66,11 @@
             <v-avatar class="primary lighten-1">{{church.IndonesianLeaderSize}}</v-avatar>Indonesian
           </v-chip>
         </span>
+        <span v-if="church.ChildrenLeaderSize > 0">
+          <v-chip small color="secondary darken-3">
+            <v-avatar class="primary lighten-1">{{church.ChildrenLeaderSize}}</v-avatar>Children
+          </v-chip>
+        </span>
       </v-flex>
     </v-layout>
   </v-card>

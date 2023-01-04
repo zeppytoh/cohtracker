@@ -27,11 +27,11 @@
               </v-flex>
               <v-flex shrink>
                 <v-edit-dialog
-                  v-if="$store.state.Role=='church-admin'"
+                  v-if="$store.state.Role=='church-admin' || $store.state.Role=='super-admin'"
                   :return-value.sync="props.item.BelieverStatus"
                   lazy
                   large
-                  persistent
+                  @open="clearMessage()"
                   @save="saveContact(props.item)"
                   @cancel="cancel"
                   class="right"
@@ -56,8 +56,6 @@
                     <v-text-field
                       v-model="logMessage"
                       label="Give details for this status change"
-                      :rules="['Required']"
-                      required
                       autofocus
                     ></v-text-field>
                   </template>
@@ -177,22 +175,21 @@ export default {
       ],
       rowsPerPageItems: [30, 60, 100],
 
+      logMessage: "",
+
       pagination: {
         rowsPerPage: 30
       }
     };
   },
   methods: {
-    ...mapActions(["updateContact", "fetchContacts"]),
+    ...mapActions(["updateContact", "fetchContacts", "setSnackMessage"]),
     showContactHistory(id) {
-      console.log(id);
       this.$router.push({
         path: "/dashboard/contacts/history/" + id
       });
     },
     filterMultiple(item) {
-      // searchTerm == { language: null ? 'english', status: null ? '1' }
-
       return (
         item.FirstName.indexOf(this.search) !== -1 ||
         item.LastName.indexOf(this.search) !== -1
@@ -202,22 +199,31 @@ export default {
       return items.filter(filterFunction);
     },
     saveContact(contact) {
-      if (contact.BelieverStatus !== "2" && this.logMessage == "") {
-        this.setSnack(
-          "Status was not changed because no message was logged. Please try again"
-        );
-        this.cancel();
-      } else {
+      // if (contact.BelieverStatus !== "2" && this.logMessage == "") {
+      //   this.setSnackMessage(
+      //     "Status was not changed because no message was logged. Please try again"
+      //   );
+      //   this.cancel();
+      // } else {
+        var message = this.logMessage;
+        var churchID = this.Church.ChurchID;
+        if (this.$store.state.Role=='super-admin') {
+          message = 'Updated by admin - ' + this.logMessage;
+          churchID = contact.ChurchID;
+        }
+
         const payload = {
           BelieverID: contact.BelieverID,
           BelieverStatus: contact.BelieverStatus,
-          ChangeLog: this.logMessage,
-          ChurchID: this.Church.ChurchID
+          ChangeLog: message,
+          ChurchID: churchID
         };
         this.updateContact(payload);
-        this.setSnack("Status updated");
         this.logMessage = "";
-      }
+      // }
+    },
+    clearMessage() {
+      this.logMessage = "";
     },
     cancel() {
       return;

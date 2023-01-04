@@ -17,6 +17,8 @@
             </v-list-tile-content>
             <v-divider></v-divider>
           </v-subheader>
+
+          <!-- For all type of users -->
           <v-list-tile v-for="link in links" :key="link.text" router :to="{path: link.routename}">
             <v-list-tile-action>
               <v-icon class="white--text">{{ link.icon }}</v-icon>
@@ -25,6 +27,17 @@
               <v-list-tile-title class="white--text">{{ link.text }}</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
+
+          <!-- Only for admins -->
+          <v-list-tile v-if="$store.state.Role=='super-admin'" v-for="link in adminLinks" :key="link.text" router :to="{path: link.routename}">
+            <v-list-tile-action>
+              <v-icon class="white--text">{{ link.icon }}</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title class="white--text">{{ link.text }}</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
         </v-list>
       </v-layout>
     </v-img>
@@ -52,6 +65,18 @@ export default {
           icon: "more",
           text: "Change Password",
           routename: "/changepassword"
+        }
+      ],
+      adminLinks: [
+        {
+          icon: "dashboard",
+          text: "Church - Completed Action",
+          routename: "/dashboard/churches/completed/"
+        },
+        {
+          icon: "dashboard",
+          text: "Church - Pending Action",
+          routename: "/dashboard/churches/pending/"
         }
       ]
     };
